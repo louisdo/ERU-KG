@@ -782,9 +782,9 @@ def process_dataset(dataset_name):
             processed_dataset.append(processed_line)
         return processed_dataset
     
-    elif dataset_name == "scirepeval_classification_fos":
-        processed_dataset = []
+    # elif dataset_name == "scirepeval_classification_fos":
+    #     processed_dataset = []
 
-        with open("")
+    #     with open("")
     else:
         raise NotImplementedError

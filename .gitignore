@@ -1,0 +1,9 @@
+*.log
+*_gitig_*
+*view*.csv
+*view*.txt
+__pycache__/
+sent2vec/
+test*.ipynb
+bm25_eval_results*.txt
+bm25_eval_results*.csv

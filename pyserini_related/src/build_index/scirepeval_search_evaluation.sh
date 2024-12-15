@@ -1,0 +1,43 @@
+INPUT_FILE="/scratch/lamdo/pyserini_experiments/scirepeval_collections/corpus/scirepeval_search_evaluation.jsonl"  \
+OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scirepeval_search_evaluation_collections/pyserini_formatted_collection" \
+INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scirepeval_search_evaluation" \
+python scirepeval_search_evaluation.py
+
+# OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scirepeval_search_evaluation_collections/pyserini_formatted_collection_keyphrase_expansion_embedrank_sent2vec" \
+# KEYWORD_FOR_DOCUMENT_EXPANSION="/home/lamdo/keyphrase_informativeness_test/data/experiments/results/scirepeval_search_evaluation--embedrank_sent2vec.json" \
+# INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scirepeval_search_evaluation_keyphrase_expansion_embedrank_sent2vec" \
+# python scirepeval_search_evaluation.py
+
+
+# OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scirepeval_search_evaluation_collections/pyserini_formatted_collection_doct5queries" \
+# KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scirepeval_search_evaluation--doct5queries.json" \
+# INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scirepeval_search_evaluation_doct5queries" \
+# python scirepeval_search_evaluation.py
+
+
+INPUT_FILE="/scratch/lamdo/pyserini_experiments/scirepeval_collections/corpus/scirepeval_search_evaluation.jsonl"  \
+OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scirepeval_search_evaluation_collections/pyserini_formatted_collection_uokg-1" \
+KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scirepeval_search_evaluation--uokg-1.json" \
+INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scirepeval_search_evaluation_keyphrase_expansion_uokg-1" \
+python scirepeval_search_evaluation.py
+
+
+INPUT_FILE="/scratch/lamdo/pyserini_experiments/scirepeval_collections/corpus/scirepeval_search_evaluation.jsonl"  \
+OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scirepeval_search_evaluation_collections/pyserini_formatted_collection_autokeygen-1" \
+KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scirepeval_search_evaluation--autokeygen-1.json" \
+INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scirepeval_search_evaluation_keyphrase_expansion_autokeygen-1" \
+python scirepeval_search_evaluation.py
+
+
+INPUT_FILE="/scratch/lamdo/pyserini_experiments/scirepeval_collections/corpus/scirepeval_search_evaluation.jsonl"  \
+OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scirepeval_search_evaluation_collections/pyserini_formatted_collection_copyrnn-1" \
+KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scirepeval_search_evaluation--copyrnn-1.json" \
+INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scirepeval_search_evaluation_keyphrase_expansion_copyrnn-1" \
+python scirepeval_search_evaluation.py
+
+
+INPUT_FILE="/scratch/lamdo/pyserini_experiments/scirepeval_collections/corpus/scirepeval_search_evaluation.jsonl"  \
+OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scirepeval_search_evaluation_collections/pyserini_formatted_collection_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty" \
+KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scirepeval_search_evaluation--retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty.json" \
+INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scirepeval_search_evaluation_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty" \
+python scirepeval_search_evaluation.py

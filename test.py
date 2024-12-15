@@ -1,0 +1,1 @@
+from src.retrieval_based_ukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation

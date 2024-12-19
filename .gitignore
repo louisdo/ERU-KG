@@ -8,4 +8,5 @@ test*.ipynb
 bm25_eval_results*.txt
 bm25_eval_results*.csv
 splade/
+data/
 scirepeval/

@@ -15,6 +15,8 @@ KEYWORD_FOR_DOCUMENT_EXPANSION = os.getenv("KEYWORD_FOR_DOCUMENT_EXPANSION")
 EXPANSION_ONLY_PRESENT_KEYPHRASES = int(os.getenv("EXPANSION_ONLY_PRESENT_KEYPHRASES", 0))
 NUMBER_OF_KEYWORDS_EACH_TYPE = int(os.getenv("NUMBER_OF_KEYWORDS_EACH_TYPE", 10))
 
+USE_KEYWORDS_INSTEAD_OF_DOCUMENT = int(os.getenv("USE_KEYWORDS_INSTEAD_OF_DOCUMENT", 0))
+
 remove_folder(INDEX_FOLDER)
 remove_folder(OUTPUT_FOLDER)
 maybe_create_folder(OUTPUT_FOLDER)
@@ -42,7 +44,8 @@ documents = convert_dataset_to_pyserini_format(dataset = corpus, ids = ids,
                                                keyword_for_document_expansion_path = KEYWORD_FOR_DOCUMENT_EXPANSION,
                                                convert_nounphrases_to_question=False,
                                                num_keyword_each_type = NUMBER_OF_KEYWORDS_EACH_TYPE,
-                                               expansion_only_present_keyword=EXPANSION_ONLY_PRESENT_KEYPHRASES)
+                                               expansion_only_present_keyword=EXPANSION_ONLY_PRESENT_KEYPHRASES,
+                                               use_keywords_instead_of_document=USE_KEYWORDS_INSTEAD_OF_DOCUMENT)
 
 
 output_folder = OUTPUT_FOLDER

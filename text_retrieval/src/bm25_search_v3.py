@@ -17,6 +17,8 @@ GROUNDTRUTH_DATA_PATH = os.getenv("GROUNDTRUTH_DATA_PATH")
 DATASET_NAME = os.getenv("DATASET_NAME")
 
 QUERY_EXPANSION_PATH = os.getenv("QUERY_EXPANSION_PATH", "")
+EXPANSION_ONLY_PRESENT_KEYPHRASES = int(os.getenv("EXPANSION_ONLY_PRESENT_KEYPHRASES", 0))
+NUMBER_OF_KEYWORDS_EACH_TYPE = int(os.getenv("NUMBER_OF_KEYWORDS_EACH_TYPE", 10))
 
 SEARCHER = LuceneSearcher(INDEX_PATH)
 
@@ -204,6 +206,20 @@ def do_search_and_evaluate(queries, qrels,
     return result
 
 
+def do_query_expansion_using_keyphrases(query, expansion, 
+                                        num_keyword_each_type = NUMBER_OF_KEYWORDS_EACH_TYPE,
+                                        expansion_only_present_keyword=EXPANSION_ONLY_PRESENT_KEYPHRASES):
+    present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:num_keyword_each_type]
+    absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:num_keyword_each_type]
+
+    if expansion_only_present_keyword:
+        query = query + " " + " ".join(present_keyphrases)
+    else:
+        query = query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+
+    return query
+
+
 
 def read_dataset(path, dataset_name, query_expansion = None):
     # need dataset name since each dataset has different format
@@ -242,9 +258,10 @@ def read_dataset(path, dataset_name, query_expansion = None):
             # if not line_labels: number_of_queries_with_no_rel_docs += 1
 
             if expansion:
-                present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
-                absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
-                line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+                # present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
+                # absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
+                # line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+                line_query = do_query_expansion_using_keyphrases(line_query, expansion)
 
             queries.append(line_query)
             all_labels.append(line_labels)
@@ -285,9 +302,11 @@ def read_dataset(path, dataset_name, query_expansion = None):
             line_labels = qid2docids[qid]
 
             if expansion:
-                present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
-                absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
-                line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+                # present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
+                # absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
+                # line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+
+                line_query = do_query_expansion_using_keyphrases(line_query, expansion)
 
                 # tokens = line_query.split(" ")
                 # line_query = " ".join(list(set(tokens)))
@@ -333,9 +352,11 @@ def read_dataset(path, dataset_name, query_expansion = None):
             line_labels = qid2docids[qid]
             
             if expansion:
-                present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
-                absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
-                line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+                # present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
+                # absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
+                # line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+
+                line_query = do_query_expansion_using_keyphrases(line_query, expansion)
 
                 # tokens = line_query.split(" ")
                 # line_query = " ".join(list(set(tokens)))
@@ -384,9 +405,11 @@ def read_dataset(path, dataset_name, query_expansion = None):
             line_labels = qid2docids[qid]
 
             if expansion:
-                present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
-                absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
-                line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+                # present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
+                # absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
+                # line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+
+                line_query = do_query_expansion_using_keyphrases(line_query, expansion)
 
                 # tokens = line_query.split(" ")
                 # line_query = " ".join(list(set(tokens)))
@@ -436,9 +459,11 @@ def read_dataset(path, dataset_name, query_expansion = None):
             line_labels = qid2docids[qid]
 
             if expansion:
-                present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
-                absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
-                line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+                # present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
+                # absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
+                # line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+
+                line_query = do_query_expansion_using_keyphrases(line_query, expansion)
 
                 # tokens = line_query.split(" ")
                 # line_query = " ".join(list(set(tokens)))
@@ -489,9 +514,11 @@ def read_dataset(path, dataset_name, query_expansion = None):
             line_labels = qid2docids[qid]
 
             if expansion:
-                present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
-                absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
-                line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+                # present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
+                # absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
+                # line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+
+                line_query = do_query_expansion_using_keyphrases(line_query, expansion)
 
                 # tokens = line_query.split(" ")
                 # line_query = " ".join(list(set(tokens)))

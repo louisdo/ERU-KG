@@ -4,6 +4,12 @@ EXPERIMENT_NAME="doris_mae" \
 GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
 python bm25_search_v3.py
 
+INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae" \
+EXPERIMENT_NAME="doris_mae_rm3" \
+GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
+USE_RM3=1 \
+python bm25_search_v3.py
+
 
 # # for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
 # INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae_keyphrase_expansion_embedrank_sent2vec" \
@@ -11,7 +17,6 @@ python bm25_search_v3.py
 # GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
 # python bm25_search_v3.py
 
-# # for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
 # INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae_doct5queries" \
 # EXPERIMENT_NAME="doris_mae_doct5queries" \
 # GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
@@ -31,6 +36,13 @@ INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae" \
 EXPERIMENT_NAME="doris_mae_uokg-1 [query expansion]" \
 GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
 QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/doris_mae_queries--uokg-1.json" \
+python bm25_search_v3.py
+
+INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae" \
+EXPERIMENT_NAME="doris_mae_uokg-1 [query present keyphrase expansion]" \
+GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
+QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/doris_mae_queries--uokg-1.json" \
+EXPANSION_ONLY_PRESENT_KEYPHRASES=1 \
 python bm25_search_v3.py
 
 INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae_keyphrase_expansion_uokg-1" \
@@ -57,6 +69,13 @@ GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
 QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/doris_mae_queries--autokeygen-1.json" \
 python bm25_search_v3.py
 
+INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae" \
+EXPERIMENT_NAME="doris_mae_autokeygen-1 [query present keyphrase expansion]" \
+GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
+QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/doris_mae_queries--autokeygen-1.json" \
+EXPANSION_ONLY_PRESENT_KEYPHRASES=1 \
+python bm25_search_v3.py
+
 INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae_keyphrase_expansion_autokeygen-1" \
 EXPERIMENT_NAME="doris_mae_autokeygen-1 [doc expansion]" \
 GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
@@ -81,6 +100,13 @@ GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
 QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/doris_mae_queries--copyrnn-1.json" \
 python bm25_search_v3.py
 
+INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae" \
+EXPERIMENT_NAME="doris_mae_copyrnn-1 [query present keyphrase expansion]" \
+GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
+QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/doris_mae_queries--copyrnn-1.json" \
+EXPANSION_ONLY_PRESENT_KEYPHRASES=1 \
+python bm25_search_v3.py
+
 INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae_keyphrase_expansion_copyrnn-1" \
 EXPERIMENT_NAME="doris_mae_copyrnn-1 [doc expansion]" \
 GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
@@ -103,6 +129,13 @@ INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae" \
 EXPERIMENT_NAME="doris_mae_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty [query expansion]" \
 GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
 QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/doris_mae_queries--retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty.json" \
+python bm25_search_v3.py
+
+INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae" \
+EXPERIMENT_NAME="doris_mae_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty [query present keyphrase expansion]" \
+GROUNDTRUTH_DATA_PATH="" DATASET_NAME="doris_mae" \
+QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/doris_mae_queries--retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty.json" \
+EXPANSION_ONLY_PRESENT_KEYPHRASES=1 \
 python bm25_search_v3.py
 
 INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/doris_mae_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty" \

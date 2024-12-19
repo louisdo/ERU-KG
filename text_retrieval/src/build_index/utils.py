@@ -202,7 +202,8 @@ def convert_dataset_to_pyserini_format(dataset,
                                        extract_nounphrases = False,
                                        apply_expansion_using_keyword = True,
                                        num_keyword_each_type = 10,
-                                       expansion_only_present_keyword = False):
+                                       expansion_only_present_keyword = False,
+                                       use_keywords_instead_of_document = False):
     
     if extract_nounphrases:
         if CANDEXT["candext"] == None:
@@ -253,7 +254,7 @@ def convert_dataset_to_pyserini_format(dataset,
             kw_exp_string = f"\n\n{kw_exp_string}"
         else: kw_exp_string = ""
 
-        all_contents = [text, kw_exp_string]
+        all_contents = [text, kw_exp_string] if not use_keywords_instead_of_document else [kw_exp_string]
         content = "\n".join([item for item in all_contents if item])
         # content = text if not kw_exp_string else f"{text}\n{kw_exp_string}"
 

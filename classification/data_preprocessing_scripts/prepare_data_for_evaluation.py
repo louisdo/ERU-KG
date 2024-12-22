@@ -19,7 +19,7 @@ def process_dataset(dataset_name):
     
     ds_evaluation = [dict(row) for row in ds_evaluation]
 
-    print(type(ds_evaluation))
+    # print(type(ds_evaluation))
     
     return ds_evaluation
 
@@ -30,6 +30,8 @@ def add_keyphrase_expansion_to_dataset(ds_evaluation,
     if not keyphrase_expansion_path: 
         print("No keyphrase expansion path provided")
         return ds_evaluation
+    
+    print("Using keyphrase expansion from:", keyphrase_expansion_path)
     
     with open(keyphrase_expansion_path) as f:
         all_keyphrase_expansions = json.load(f)
@@ -49,9 +51,10 @@ def add_keyphrase_expansion_to_dataset(ds_evaluation,
 
 
 if __name__ == "__main__":
+    print("Dataset name:", DATASET_NAME)
     ds_evaluation = process_dataset(DATASET_NAME)
     ds_evaluation = add_keyphrase_expansion_to_dataset(ds_evaluation)
     
-
+    print("Saving preprocessed dataset to", OUTPUT_FILE)
     with open(OUTPUT_FILE, "w") as f:
         json.dump(ds_evaluation, f)

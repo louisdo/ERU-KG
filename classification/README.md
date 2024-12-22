@@ -12,10 +12,10 @@ git clone git@github.com:allenai/scirepeval.git
 Copy 4 files into `scirepeval` folder
 ```
 cd ERU-KG
-cp classification/custom_evaluation_fos.py
-cp classification/custom_evaluation_fos.sh
-cp classification/custom_generate_embeddings.py
-cp classification/custom_generate_embeddings.py
+cp classification/custom_evaluation_fos.py scirepeval/
+cp classification/custom_evaluation_fos.sh scirepeval/
+cp classification/custom_generate_embeddings.py scirepeval/
+cp classification/custom_generate_embeddings.py scirepeval/
 ```
 
 

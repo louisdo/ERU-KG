@@ -17,5 +17,6 @@ with open("bm25_eval_results.txt") as f:
 
 
 df = pd.DataFrame(data)
+df.sort_values(by=['A', 'B'], ascending=[True, False])
 
 df.to_csv("bm25_eval_results.csv", index = False)

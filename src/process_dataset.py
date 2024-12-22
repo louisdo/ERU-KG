@@ -782,57 +782,103 @@ def process_dataset(dataset_name):
             processed_dataset.append(processed_line)
         return processed_dataset
     
-    elif dataset_name == "scirepeval_fos_100k":
-        processed_dataset = []
+    # elif dataset_name == "scirepeval_fos_100k":
+    #     processed_dataset = []
 
-        with open("/scratch/lamdo/scirepeval_classification/fos/train_100k.jsonl") as f:
-            for line in f:
-                jline = json.loads(line)
+    #     with open("/scratch/lamdo/scirepeval_classification/fos/train_100k.jsonl") as f:
+    #         for line in f:
+    #             jline = json.loads(line)
 
-                doc_id = jline.get("doc_id")
-                title = jline.get("title")
-                abstract = jline.get("abstract")
+    #             doc_id = jline.get("doc_id")
+    #             title = jline.get("title")
+    #             abstract = jline.get("abstract")
 
-                text = f"{title.lower()}. {abstract.lower()}"
-                text_not_lowered = f"{title}\n{abstract}"
+    #             text = f"{title.lower()}. {abstract.lower()}"
+    #             text_not_lowered = f"{title}\n{abstract}"
 
-                processed_line = {
-                    "doc_id": doc_id,
-                    "text": text,
-                    "text_not_lowered": text_not_lowered,
-                    "present_keyphrases": [],
-                    "absent_keyphrases": []
-                }
+    #             processed_line = {
+    #                 "doc_id": doc_id,
+    #                 "text": text,
+    #                 "text_not_lowered": text_not_lowered,
+    #                 "present_keyphrases": [],
+    #                 "absent_keyphrases": []
+    #             }
 
-                processed_dataset.append(processed_line)
+    #             processed_dataset.append(processed_line)
 
-        return processed_dataset
+    #     return processed_dataset
     
 
-    elif dataset_name == "scirepeval_mesh_descriptors_100k":
+    # elif dataset_name == "scirepeval_mesh_descriptors_100k":
+    #     processed_dataset = []
+
+    #     with open("/scratch/lamdo/scirepeval_classification/mesh_descriptors/train_100k.jsonl") as f:
+    #         for line in f:
+    #             jline = json.loads(line)
+
+    #             doc_id = jline.get("doc_id")
+    #             title = jline.get("title")
+    #             abstract = jline.get("abstract")
+
+    #             text = f"{title.lower()}. {abstract.lower()}"
+    #             text_not_lowered = f"{title}\n{abstract}"
+
+    #             processed_line = {
+    #                 "doc_id": doc_id,
+    #                 "text": text,
+    #                 "text_not_lowered": text_not_lowered,
+    #                 "present_keyphrases": [],
+    #                 "absent_keyphrases": []
+    #             }
+
+    #             processed_dataset.append(processed_line)
+
+    #     return processed_dataset
+    
+    elif dataset_name == "scirepeval_fos_test":
         processed_dataset = []
 
-        with open("/scratch/lamdo/scirepeval_classification/mesh_descriptors/train_100k.jsonl") as f:
-            for line in f:
-                jline = json.loads(line)
+        ds = load_dataset("allenai/scirepeval", "fos")
 
-                doc_id = jline.get("doc_id")
-                title = jline.get("title")
-                abstract = jline.get("abstract")
+        for line in ds["evaluation"]:
+            doc_id = line.get("doc_id")
+            title = line.get("title")
+            abstract = line.get("abstract")
 
-                text = f"{title.lower()}. {abstract.lower()}"
-                text_not_lowered = f"{title}\n{abstract}"
+            text = f"{title.lower()}. {abstract.lower()}"
+            text_not_lowered = f"{title}. {abstract}"
+            processed_line = {
+                "doc_id": doc_id,
+                "text": text,
+                "text_not_lowered": text_not_lowered,
+                "present_keyphrases": [],
+                "absent_keyphrases": []
+            }
 
-                processed_line = {
-                    "doc_id": doc_id,
-                    "text": text,
-                    "text_not_lowered": text_not_lowered,
-                    "present_keyphrases": [],
-                    "absent_keyphrases": []
-                }
+            processed_dataset.append(processed_line)
+        return processed_dataset
+    
+    elif dataset_name == "scirepeval_mesh_descriptors_test":
+        processed_dataset = []
 
-                processed_dataset.append(processed_line)
+        ds = load_dataset("allenai/scirepeval", "mesh_descriptors")
 
+        for line in ds["evaluation"]:
+            doc_id = line.get("doc_id")
+            title = line.get("title")
+            abstract = line.get("abstract")
+
+            text = f"{title.lower()}. {abstract.lower()}"
+            text_not_lowered = f"{title}. {abstract}"
+            processed_line = {
+                "doc_id": doc_id,
+                "text": text,
+                "text_not_lowered": text_not_lowered,
+                "present_keyphrases": [],
+                "absent_keyphrases": []
+            }
+
+            processed_dataset.append(processed_line)
         return processed_dataset
     else:
         raise NotImplementedError

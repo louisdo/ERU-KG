@@ -1,8 +1,8 @@
-./trec_covid.sh
-
-./scidocs.sh
+# ./trec_covid.sh
 
 ./scifact.sh
+
+./scidocs.sh
 
 ./nfcorpus.sh
 

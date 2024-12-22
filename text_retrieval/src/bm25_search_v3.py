@@ -559,6 +559,8 @@ if __name__ == "__main__":
     experiment_results = do_search_and_evaluate(queries = queries, qrels = qrels, show_progress_bar=True)
     experiment_results["name"] = EXPERIMENT_NAME
     experiment_results["when"] = get_current_date_string()
+    # experiment_results["dataset_name"] = DATASET_NAME
+    # experiment_results["model_name"] = EXPERIMENT_NAME.replace(DATASET_NAME + "_", "").replace("keyphrase_expansion_", "")
 
 
     with open("bm25_eval_results.txt", "a") as f:

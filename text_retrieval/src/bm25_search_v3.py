@@ -18,14 +18,14 @@ DATASET_NAME = os.getenv("DATASET_NAME")
 
 QUERY_EXPANSION_PATH = os.getenv("QUERY_EXPANSION_PATH", "")
 EXPANSION_ONLY_PRESENT_KEYPHRASES = int(os.getenv("EXPANSION_ONLY_PRESENT_KEYPHRASES", 0))
-NUMBER_OF_KEYWORDS_EACH_TYPE = int(os.getenv("NUMBER_OF_KEYWORDS_EACH_TYPE", 10))
+NUMBER_OF_KEYWORDS_EACH_TYPE = int(os.getenv("NUMBER_OF_KEYWORDS_EACH_TYPE", 5))
 
 SEARCHER = LuceneSearcher(INDEX_PATH)
 
 USE_RM3 = os.getenv("USE_RM3", 0)
 
 
-METADATA_STORE_FOR_DEBUGGING = "/scratch/lamdo/eru_kg_retrieval_eval"
+# METADATA_STORE_FOR_DEBUGGING = "/scratch/lamdo/eru_kg_retrieval_eval"
 
 
 if QUERY_EXPANSION_PATH and os.path.exists(QUERY_EXPANSION_PATH):
@@ -67,9 +67,9 @@ def evaluate(qrels: Dict[str, Dict[str, int]],
     evaluator = pytrec_eval.RelevanceEvaluator(qrels, {map_string, ndcg_string, recall_string, precision_string})
     scores = evaluator.evaluate(results)
 
-    with open(os.path.join(METADATA_STORE_FOR_DEBUGGING, f"{EXPERIMENT_NAME}.json"), "w") as f:
-        json.dump({"scores": scores, "results": results, "qrels": qrels}, f)
-    print(len(scores))
+    # with open(os.path.join(METADATA_STORE_FOR_DEBUGGING, f"{EXPERIMENT_NAME}.json"), "w") as f:
+    #     json.dump({"scores": scores, "results": results, "qrels": qrels}, f)
+    # print(len(scores))
     
     for query_id in scores.keys():
         for k in k_values:

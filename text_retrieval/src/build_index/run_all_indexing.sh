@@ -1,9 +1,9 @@
 # ./trec_covid.sh
 
-./scifact.sh
+# ./scifact.sh
 
-./scidocs.sh
+# ./scidocs.sh
 
-./nfcorpus.sh
+# ./nfcorpus.sh
 
-# ./doris_mae.sh
+./doris_mae.sh

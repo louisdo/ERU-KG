@@ -42,7 +42,7 @@ def get_dataset_name_from_experiment_name(name):
     return None
 
 data = []
-with open("bm25_eval_results_21december2024.txt") as f:
+with open("bm25_eval_results_23december2024.txt") as f:
     for line in f:
         jline = json.loads(line)
         exp_name = jline["name"]
@@ -75,4 +75,4 @@ df = pd.DataFrame(data)
 first_column = df.pop('dataset_name')
 df.insert(0, 'dataset_name', first_column)
 
-df.to_csv("bm25_eval_results_21december2024.csv", index = False)
+df.to_csv("bm25_eval_results_23december2024.csv", index = False)

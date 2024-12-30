@@ -1,37 +1,31 @@
-# for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scifact" \
-EXPERIMENT_NAME="scifact" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scifact" \
-python bm25_search_v3.py
-
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scifact" \
-EXPERIMENT_NAME="scifact_rm3" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scifact" \
-USE_RM3=1 \
-python bm25_search_v3.py
-
-
 # # for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
-# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scifact_keyphrase_expansion_embedrank_sent2vec" \
-# EXPERIMENT_NAME="scifact_keyphrase_expansion_embedrank_sent2vec" \
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scifact" \
+# EXPERIMENT_NAME="scifact" \
 # GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scifact" \
 # python bm25_search_v3.py
 
-# for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scifact_doct5queries" \
-EXPERIMENT_NAME="scifact_doct5queries" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scifact" \
-python bm25_search_v3.py
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scifact" \
+# EXPERIMENT_NAME="scifact_rm3" \
+# GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scifact" \
+# USE_RM3=1 \
+# python bm25_search_v3.py
 
 
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scifact_doct5queries" \
-EXPERIMENT_NAME="scifact_doct5queries_rm3" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scifact" \
-USE_RM3=1 \
-python bm25_search_v3.py
+# # for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scifact_doct5queries" \
+# EXPERIMENT_NAME="scifact_doct5queries" \
+# GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scifact" \
+# python bm25_search_v3.py
 
 
-for i in $(seq 1 3);
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scifact_doct5queries" \
+# EXPERIMENT_NAME="scifact_doct5queries_rm3" \
+# GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scifact" \
+# USE_RM3=1 \
+# python bm25_search_v3.py
+
+
+for i in $(seq 1 1);
 do
     #----------------------------------------
 

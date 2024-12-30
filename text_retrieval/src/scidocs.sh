@@ -1,37 +1,30 @@
-# for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scidocs" \
-EXPERIMENT_NAME="scidocs" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scidocs" \
-python bm25_search_v3.py
-
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scidocs" \
-EXPERIMENT_NAME="scidocs_rm3" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scidocs" \
-USE_RM3=1 \
-python bm25_search_v3.py
-
-
 # # for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
-# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scidocs_keyphrase_expansion_embedrank_sent2vec" \
-# EXPERIMENT_NAME="scidocs_keyphrase_expansion_embedrank_sent2vec" \
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scidocs" \
+# EXPERIMENT_NAME="scidocs" \
 # GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scidocs" \
 # python bm25_search_v3.py
 
-# for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scidocs_doct5queries" \
-EXPERIMENT_NAME="scidocs_doct5queries" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scidocs" \
-python bm25_search_v3.py
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scidocs" \
+# EXPERIMENT_NAME="scidocs_rm3" \
+# GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scidocs" \
+# USE_RM3=1 \
+# python bm25_search_v3.py
+
+# # for scirepeval dataset, no need to specify GROUNDTRUTH_DATA_PATH since we will load it from datasets package
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scidocs_doct5queries" \
+# EXPERIMENT_NAME="scidocs_doct5queries" \
+# GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scidocs" \
+# python bm25_search_v3.py
 
 
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scidocs_doct5queries" \
-EXPERIMENT_NAME="scidocs_doct5queries_rm3" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scidocs" \
-USE_RM3=1 \
-python bm25_search_v3.py
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/scidocs_doct5queries" \
+# EXPERIMENT_NAME="scidocs_doct5queries_rm3" \
+# GROUNDTRUTH_DATA_PATH="" DATASET_NAME="scidocs" \
+# USE_RM3=1 \
+# python bm25_search_v3.py
 
 
-for i in $(seq 1 3);
+for i in $(seq 1 1);
 do
     #----------------------------------------
 

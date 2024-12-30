@@ -320,6 +320,15 @@ def do_keyphrase_extraction(doc, top_k = 10):
         return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
                                                         informativeness_model_name="custom_trained_combined_references_nounphrase_v6-3",
                                                         apply_position_penalty=True, length_penalty=-0.25)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-4_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-4",
+                                                        apply_position_penalty=True, length_penalty=-0.25)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-5_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-5",
+                                                        apply_position_penalty=True, length_penalty=-0.25)
+    
 
     elif MODEL_TO_USE == "uokg-1":
         alpha_by_dataset = {"semeval": -1,"inspec": -1,"nus": -0.75,"krapivin": -0.25}

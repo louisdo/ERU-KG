@@ -17,6 +17,23 @@ for dataset in "${datasets[@]}"; do
     done
 done
 
+# eru-kg-small
+models_types=(
+    "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-1_position_penalty+length_penalty"
+    "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-2_position_penalty+length_penalty" 
+    "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-3_position_penalty+length_penalty"
+)
+datasets=("scirepeval_fos_test" "scirepeval_mesh_descriptors_test")
+result_folder="/scratch/lamdo/precompute_keyphrase_extraction/"
+
+for dataset in "${datasets[@]}"; do
+    for model_type in "${models_types[@]}"; do
+        echo "Config: $dataset - $model_type - $top_k"
+
+        CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE=$dataset RESULTS_FOLDER=$result_folder MODEL_TO_USE=$model_type python run_keyphrase_prediction_batch.py
+    done
+done
+
 
 # autokeygen
 models_types=(

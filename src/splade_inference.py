@@ -108,6 +108,26 @@ def init_splade_model(model_name):
         model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v6-4/debug/checkpoint/model"
     elif model_name == "custom_trained_combined_references_v6-5" or model_name == "custom_trained_combined_references_nounphrase_v6-5":
         model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v6-5/debug/checkpoint/model"
+
+    
+    elif model_name == "custom_trained_combined_references_v7-1" or model_name == "custom_trained_combined_references_nounphrase_v7-1":
+        model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v7-1/debug/checkpoint/model"
+    elif model_name == "custom_trained_combined_references_v7-2" or model_name == "custom_trained_combined_references_nounphrase_v7-2":
+        model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v7-2/debug/checkpoint/model"
+    elif model_name == "custom_trained_combined_references_v7-3" or model_name == "custom_trained_combined_references_nounphrase_v7-3":
+        model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v7-3/debug/checkpoint/model"
+    elif model_name == "custom_trained_combined_references_v7-4" or model_name == "custom_trained_combined_references_nounphrase_v7-4":
+        model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v7-4/debug/checkpoint/model"
+    elif model_name == "custom_trained_combined_references_v7-5" or model_name == "custom_trained_combined_references_nounphrase_v7-5":
+        model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v7-5/debug/checkpoint/model"
+
+
+    elif model_name == "custom_trained_combined_references_no_titles_v6-1" or model_name == "custom_trained_combined_references_no_titles_nounphrase_v6-1":
+        model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_no_titles_v6-1/debug/checkpoint/model"
+    elif model_name == "custom_trained_combined_references_no_cc_v6-1" or model_name == "custom_trained_combined_references_no_cc_nounphrase_v6-1":
+        model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_no_cc_v6-1/debug/checkpoint/model"
+    elif model_name == "custom_trained_combined_references_no_queries_v6-1" or model_name == "custom_trained_combined_references_no_queries_nounphrase_v6-1":
+        model_type_or_dir = "/scratch/lamdo/splade_checkpoints/experiments_combined_references_no_queries_v6-1/debug/checkpoint/model"
     else: raise NotImplementedError
 
     print(f"Using {model_type_or_dir}")

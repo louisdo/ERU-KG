@@ -351,6 +351,28 @@ def do_keyphrase_extraction(doc, top_k = 10):
     elif MODEL_TO_USE == "copyrnn-5":
         from src.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn
         return keyphrase_generation_batch_copyrnn(docs = [doc], top_k = top_k, alpha = 0, model_run_index=5)
+    
+
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-1",
+                                                        apply_position_penalty=True, length_penalty=-0.25)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-2_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-2",
+                                                        apply_position_penalty=True, length_penalty=-0.25)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-3_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-3",
+                                                        apply_position_penalty=True, length_penalty=-0.25)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-4_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-4",
+                                                        apply_position_penalty=True, length_penalty=-0.25)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-5_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-5",
+                                                        apply_position_penalty=True, length_penalty=-0.25)
     else:
         raise NotImplementedError
 
@@ -362,7 +384,8 @@ do_keyphrase_extraction('test', top_k = 50)
 
 
 processed_dataset = []
-start_time = time.process_time_ns()
+start_cpu_time = time.process_time_ns()
+start_time = time.time()
 for sample in tqdm(dataset):
     document = sample.get("text")
     present_keyphrases = sample.get("present_keyphrases")
@@ -394,10 +417,25 @@ for sample in tqdm(dataset):
 
     # processed_dataset.append(line)
 
-end_time = time.process_time_ns()
-cpu_time = end_time - start_time
+end_cpu_time = time.process_time_ns()
+end_time = time.time()
+cpu_time = end_cpu_time - start_cpu_time
+latency = end_time - start_time
 
 print("CPU time:", cpu_time)
+
+
+formatted_results = {
+    "dataset": DATASET_TO_USE,
+    "model": MODEL_TO_USE,
+    "cpu_time": (cpu_time / 1000000000) / len(dataset),
+    "latency": latency / len(dataset),
+    "len_dataset": len(dataset)
+}
+
+with open("cpu_time_comparison.txt", "a") as f:
+    f.write(json.dumps(formatted_results))
+    f.write("\n")
 
 # with open(RESULT_FILE, "w") as f:
 #     json.dump(processed_dataset, f, indent = 4)

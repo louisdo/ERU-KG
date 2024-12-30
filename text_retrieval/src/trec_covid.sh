@@ -162,15 +162,15 @@ done
 
 
 
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/trec_covid" \
-EXPERIMENT_NAME="trec_covid_autokeygen-1 [query expansion]" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="trec_covid" \
-QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/trec_covid_queries--autokeygen-1.json" \
-python bm25_search_v3.py
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/trec_covid" \
+# EXPERIMENT_NAME="trec_covid_autokeygen-1 [query expansion]" \
+# GROUNDTRUTH_DATA_PATH="" DATASET_NAME="trec_covid" \
+# QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/trec_covid_queries--autokeygen-1.json" \
+# python bm25_search_v3.py
 
-INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/trec_covid" \
-EXPERIMENT_NAME="trec_covid_copyrnn-1 [query present keyphrase expansion]" \
-GROUNDTRUTH_DATA_PATH="" DATASET_NAME="trec_covid" \
-QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/trec_covid_queries--copyrnn-1.json" \
-EXPANSION_ONLY_PRESENT_KEYPHRASES=1 \
-python bm25_search_v3.py
+# INDEX_PATH="/scratch/lamdo/pyserini_experiments/index/trec_covid" \
+# EXPERIMENT_NAME="trec_covid_copyrnn-1 [query present keyphrase expansion]" \
+# GROUNDTRUTH_DATA_PATH="" DATASET_NAME="trec_covid" \
+# QUERY_EXPANSION_PATH="/scratch/lamdo/precompute_keyphrase_extraction/trec_covid_queries--copyrnn-1.json" \
+# EXPANSION_ONLY_PRESENT_KEYPHRASES=1 \
+# python bm25_search_v3.py

@@ -1,6 +1,7 @@
 # EMBEDDING_FILE="/scratch/lamdo/scirepeval_classification/embeddings/embeddings--specter2_base--scirepeval_fos_test_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty.json" python custom_evaluation_fos.py
 
-import os, json
+import os, json, sys
+sys.path.append('../scirepeval')
 from evaluation.evaluator import SupervisedEvaluator, SupervisedTask
 from evaluation.encoders import Model
 
@@ -19,5 +20,5 @@ evaluator = SupervisedEvaluator("Fields of study", subtype,
 
 results = evaluator.evaluate(EMBEDDING_FILE)
 results["experiment_name"] = EXPERIMENT_NAME
-with open(f"test_{EXPERIMENT_NAME}.json", "w") as f:
+with open(f"test_{EXPERIMENT_NAME}.json", "a+") as f:
     json.dump(results, f)

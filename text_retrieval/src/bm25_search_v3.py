@@ -298,6 +298,8 @@ def read_dataset(path, dataset_name, query_expansion = None):
         for line, expansion in zip(ds_queries["queries"], query_expansion):
             qid = line["_id"]
 
+            if qid not in qid2docids: continue
+
             line_query = line["text"].lower()
             line_labels = qid2docids[qid]
 
@@ -325,7 +327,7 @@ def read_dataset(path, dataset_name, query_expansion = None):
         ds_qrels = load_dataset("BeIR/scifact-qrels")
 
         qid2docids = {}
-        for split in ["train", "test"]:
+        for split in ["test"]: #["train", "test"]:
             for line in ds_qrels[split]:
                 qid = str(line["query-id"])
                 docid = str(line["corpus-id"]).replace(",", "")
@@ -347,6 +349,8 @@ def read_dataset(path, dataset_name, query_expansion = None):
         else: query_expansion = [None] * len(ds_queries["queries"])
         for line, expansion in zip(ds_queries["queries"], query_expansion):
             qid = str(line["_id"])
+
+            if qid not in qid2docids: continue
 
             line_query = line["text"].lower()
             line_labels = qid2docids[qid]
@@ -401,6 +405,8 @@ def read_dataset(path, dataset_name, query_expansion = None):
         for line, expansion in zip(ds_queries["queries"], query_expansion):
             qid = str(line["_id"])
 
+            if qid not in qid2docids: continue
+
             line_query = line["text"].lower()
             line_labels = qid2docids[qid]
 
@@ -429,7 +435,7 @@ def read_dataset(path, dataset_name, query_expansion = None):
         ds_qrels = load_dataset("BeIR/nfcorpus-qrels")
 
         qid2docids = {}
-        for split in ["train", "validation", "test"]:
+        for split in ["test"]:#["train", "validation", "test"]:
             for line in ds_qrels[split]:
                 qid = str(line["query-id"])
                 docid = str(line["corpus-id"]).replace(",", "")
@@ -454,6 +460,8 @@ def read_dataset(path, dataset_name, query_expansion = None):
         else: query_expansion = [None] * len(ds_queries["queries"])
         for line, expansion in zip(ds_queries["queries"], query_expansion):
             qid = str(line["_id"])
+
+            if qid not in qid2docids: continue
 
             line_query = line["text"].lower()
             line_labels = qid2docids[qid]
@@ -510,6 +518,8 @@ def read_dataset(path, dataset_name, query_expansion = None):
         for i, (line, expansion) in enumerate(zip(ds["Query"], query_expansion)):
             qid = str(i)
 
+            if qid not in qid2docids: continue
+
             line_query = line["query_text"].lower()
             line_labels = qid2docids[qid]
 
@@ -532,7 +542,71 @@ def read_dataset(path, dataset_name, query_expansion = None):
         # print("Number of queries with no relevant docs", number_of_queries_with_no_rel_docs)
         return queries, qrels
 
+    elif dataset_name == "acm_cr":
+        # first process the qrels
+
+        with open("/scratch/lamdo/acm-cr/data/topics+qrels/sentences.qrels") as f:
+            data = f.readlines()
+
+        qid2docids = {}
+        for line in data:
+            splitted_line = line.split("\t")
+            qid = splitted_line[0]
+            docid = splitted_line[2]
+
+            if qid not in qid2docids: qid2docids[qid] = []
+
+            qid2docids[qid].append(
+                {
+                    "docid": docid,
+                    "score": 1
+                }
+            )
+
         
+        # then process the queries
+        with open("/scratch/lamdo/acm-cr/data/topics+qrels/sentences.jsonl") as f:
+            queries_metadata = []
+            for line in f:
+                jline = json.loads(line)
+                queries_metadata.append(jline)
+
+        queries = []
+        all_labels = []
+
+        if query_expansion is not None: assert len(query_expansion) == len(queries_metadata)
+        else: query_expansion = [None] * len(queries_metadata)
+
+        for i, (line, expansion) in enumerate(zip(queries_metadata, query_expansion)):
+            qid = str(line["id"])
+
+            if qid not in qid2docids: continue
+
+            line_query = line["context"].lower()
+            line_labels = qid2docids[qid]
+
+            if expansion:
+                # present_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:5]
+                # absent_keyphrases = expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:5]
+                # line_query = line_query + " " + " ".join(present_keyphrases) + " " + " ".join(absent_keyphrases)
+
+                line_query = do_query_expansion_using_keyphrases(line_query, expansion)
+
+                # tokens = line_query.split(" ")
+                # line_query = " ".join(list(set(tokens)))
+
+            queries.append(line_query)
+            all_labels.append(line_labels)
+
+        qrels = convert_to_pytrec_eval_format(queries = queries, all_search_results=all_labels)
+
+        print("Number of datapoints", len(queries))
+        # print("Number of queries with no relevant docs", number_of_queries_with_no_rel_docs)
+        return queries, qrels
+
+
+
+
     else: raise NotImplementedError
 
 

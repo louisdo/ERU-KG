@@ -384,6 +384,23 @@ def do_keyphrase_extraction(doc, top_k = 10):
         return nounphrase_extraction_as_keyphrase_generation(doc, [1, 5])
     elif MODEL_TO_USE == "nounphrase_extraction_2_5":
         return nounphrase_extraction_as_keyphrase_generation(doc, [2, 5])
+    
+
+    elif MODEL_TO_USE == "tpg-1":
+        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=1)
+    elif MODEL_TO_USE == "tpg-2":
+        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=2)
+    elif MODEL_TO_USE == "tpg-3":
+        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=3)
+    elif MODEL_TO_USE == "tpg-4":
+        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=4)
+    elif MODEL_TO_USE == "tpg-5":
+        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=5)
     else:
         raise NotImplementedError
 

@@ -880,5 +880,78 @@ def process_dataset(dataset_name):
 
             processed_dataset.append(processed_line)
         return processed_dataset
+    
+
+    elif dataset_name == "acm_cr":
+        processed_dataset = []
+
+        with open("/scratch/lamdo/acm-cr/data/docs/collection.jsonl") as f:
+            for line in f:
+                jline = json.loads(line)
+
+                doc_id = jline.get("id")
+                title = jline.get("title")
+                abstract = jline.get("abstract")
+
+                text = f"{title.lower()}. {abstract.lower()}"
+                text_not_lowered = f"{title}. {abstract}"
+                processed_line = {
+                    "doc_id": doc_id,
+                    "text": text,
+                    "text_not_lowered": text_not_lowered,
+                    "present_keyphrases": [],
+                    "absent_keyphrases": []
+                }
+
+                processed_dataset.append(processed_line)
+
+        return processed_dataset
+
+    elif dataset_name == "acm_cr_queries":
+        processed_dataset = []
+
+        with open("/scratch/lamdo/acm-cr/data/topics+qrels/sentences.jsonl") as f:
+            for line in f:
+                jline = json.loads(line)
+
+                doc_id = jline.get("id")
+                text = jline.get("context").lower()
+                text_not_lowered = jline.get("context")
+                
+                processed_line = {
+                    "doc_id": doc_id,
+                    "text": text,
+                    "text_not_lowered": text_not_lowered,
+                    "present_keyphrases": [],
+                    "absent_keyphrases": []
+                }
+
+                processed_dataset.append(processed_line)
+
+        return processed_dataset
+    elif dataset_name == "arxiv_classification":
+        from datasets import load_from_disk
+
+        processed_dataset = []
+
+        ds = load_from_disk("/scratch/lamdo/arxiv_classification/arxiv_data_t+a/")
+
+        for line in ds["evaluation"]:
+            doc_id = line.get("doc_id")
+            title = line.get("title")
+            abstract = line.get("abstract")
+
+            text = f"{title.lower()}. {abstract.lower()}"
+            text_not_lowered = f"{title}. {abstract}"
+            processed_line = {
+                "doc_id": doc_id,
+                "text": text,
+                "text_not_lowered": text_not_lowered,
+                "present_keyphrases": [],
+                "absent_keyphrases": []
+            }
+
+            processed_dataset.append(processed_line)
+        return processed_dataset
     else:
         raise NotImplementedError

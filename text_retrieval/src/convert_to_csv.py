@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-DATASETS = ["scidocs", "scifact", "nfcorpus", "trec_covid", "doris_mae"]
+DATASETS = ["scidocs", "scifact", "nfcorpus", "trec_covid", "doris_mae", "acm_cr"]
 
 EXPERIMENT_TYPES = ["[query expansion]", "[doc expansion]", "[query + doc expansion]", "[query present keyphrase expansion]", "[doc present keyphrase expansion]"]
 KEYPHRASE_GENERATION_MODELS_NAMES = {"ERU-KG", "AutoKeyGen", "UOKG", "CopyRNN"}
@@ -13,9 +13,14 @@ GROUPS_KG = {}
 
 for experiment_type in EXPERIMENT_TYPES:
     GROUPS_KG[f"ERU-KG {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
+    GROUPS_KG[f"ERU-KG (no titles) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_titles_nounphrase_v6-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
+    GROUPS_KG[f"ERU-KG (no queries) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_queries_nounphrase_v6-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
+    GROUPS_KG[f"ERU-KG (no cc) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_cc_nounphrase_v6-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
+    GROUPS_KG[f"ERU-KG-small {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
     GROUPS_KG[f"AutoKeyGen {experiment_type}"] = [f"autokeygen-{i} {experiment_type}" for i in range(1, 4)]
     GROUPS_KG[f"UOKG {experiment_type}"] = [f"uokg-{i} {experiment_type}" for i in range(1, 4)]
     GROUPS_KG[f"CopyRNN {experiment_type}"] = [f"copyrnn-{i} {experiment_type}" for i in range(1, 4)]
+    GROUPS_KG[f"TPG {experiment_type}"] = [f"tpg-{i} {experiment_type}" for i in range(1, 4)]
 
 GROUPS_TRADITIONAL_MODELS = {
     "DocT5query": ["doct5queries"] + [None] * (3 - 1),
@@ -42,7 +47,8 @@ def get_dataset_name_from_experiment_name(name):
     return None
 
 data = []
-with open("bm25_eval_results_23december2024.txt") as f:
+visited = set([])
+with open("bm25_eval_results_3jan2025.txt") as f:
     for line in f:
         jline = json.loads(line)
         exp_name = jline["name"]
@@ -61,6 +67,11 @@ with open("bm25_eval_results_23december2024.txt") as f:
                 print(_model_name)
                 continue
 
+        formatted_check_name = f"{model_name}_{run_index}_{dataset_name}"
+        if formatted_check_name in visited:
+            continue
+        visited.add(formatted_check_name)
+
         results = {"model_name": model_name, "run_index": run_index, "dataset_name": dataset_name}
         for item in jline["1000"]:
             results.update({k:v for k,v in item.items() if k in METRICS_TO_USE})
@@ -75,4 +86,4 @@ df = pd.DataFrame(data)
 first_column = df.pop('dataset_name')
 df.insert(0, 'dataset_name', first_column)
 
-df.to_csv("bm25_eval_results_23december2024.csv", index = False)
+df.to_csv("bm25_eval_results_3jan2025.csv", index = False)

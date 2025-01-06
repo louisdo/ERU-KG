@@ -1,11 +1,13 @@
 import json, os
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 
 
 KEYPHRASE_EXPANSION_PATH = os.getenv("KEYPHRASE_EXPANSION_PATH")
 DATASET_NAME = os.environ["DATASET_NAME"]
 OUTPUT_FILE = os.environ["OUTPUT_FILE"]
 NUM_KEYPHRASES_EACH_TYPE = int(os.getenv("NUM_KEYPHRASES_EACH_TYPE", 10))
+
+ONLY_PRESENT_KEYPHRASES = int(os.getenv("ONLY_PRESENT_KEYPHRASES", 0))
 
 
 def process_dataset(dataset_name):
@@ -15,6 +17,10 @@ def process_dataset(dataset_name):
 
     elif dataset_name == "scirepeval_mesh_descriptors_test":
         ds = load_dataset("allenai/scirepeval", "mesh_descriptors")
+        ds_evaluation = ds["evaluation"]
+
+    elif dataset_name == "arxiv_classification":
+        ds = load_from_disk("/scratch/lamdo/arxiv_classification/arxiv_data_t+a")
         ds_evaluation = ds["evaluation"]
     
     ds_evaluation = [dict(row) for row in ds_evaluation]
@@ -41,7 +47,10 @@ def add_keyphrase_expansion_to_dataset(ds_evaluation,
     for i in range(len(all_keyphrase_expansions)):
         keyphrase_expansion = all_keyphrase_expansions[i]
         present_keyphrases = keyphrase_expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:num_keyphrases_each_type]
-        absent_keyphrases = keyphrase_expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:num_keyphrases_each_type]
+        if not ONLY_PRESENT_KEYPHRASES:
+            absent_keyphrases = keyphrase_expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:num_keyphrases_each_type]
+        else:
+            absent_keyphrases = []
 
         kw_exp = ", ".join(present_keyphrases + absent_keyphrases)
 

@@ -1,4 +1,4 @@
-embeddings_folder="/scratch/lamdo/scirepeval_classification/embeddings/"
+embeddings_folder="/home/abodke2/kpg/ERU-KG/classification/scirepeval_classification/embeddings"
 dataset_name="scirepeval_fos_test"
 
 

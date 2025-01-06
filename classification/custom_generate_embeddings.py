@@ -1,6 +1,5 @@
 import os
 import sys
-sys.path.append('../scirepeval')
 from evaluation.eval_datasets import SimpleDataset  
 from evaluation.evaluator import Evaluator
 from evaluation.encoders import Model
@@ -19,13 +18,14 @@ model.task_id = "[CLF]"
 dataset = DATASET_PATH#"/scratch/lamdo/scirepeval_classification/fos/scirepeval_fos_test_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty.json"
 
 evaluator = Evaluator(
-    name = "MeSH Descriptors",
+    name = "arxiv",
     meta_dataset=dataset, 
     dataset_class=SimpleDataset,
     model=model,
     batch_size=32,
     fields=["title", "abstract", "keyphrase_expansion"] if KEYPHRASE_EXPANSION else ["title", "abstract"],
-    key="doc_id"
+    key="doc_id",
+    embed=True
 )
 embeddings = evaluator.generate_embeddings(save_path=EMBEDDINGS_SAVE_PATH)
 

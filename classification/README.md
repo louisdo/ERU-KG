@@ -18,6 +18,12 @@ cp classification/custom_generate_embeddings.py scirepeval/
 cp classification/custom_generate_embeddings.py scirepeval/
 ```
 
+Move 2 files to scirepeval/evaluation folder
+
+```
+cd ERU-KG
+mv -f classification/eval_datasets.py classification/evaluator.py scirepeval/
+```
 
 
 ## Data preparation

@@ -34,17 +34,24 @@
 
 # models_types=("embedrank_sent2vec")
 
-models_types=(
-    "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-1_position_penalty+length_penalty"
-    "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-2_position_penalty+length_penalty" 
-    "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-3_position_penalty+length_penalty"
-    "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-4_position_penalty+length_penalty"
-    "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-5_position_penalty+length_penalty"
-)
+# models_types=(
+#     "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-1_position_penalty+length_penalty"
+#     "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-2_position_penalty+length_penalty" 
+#     "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-3_position_penalty+length_penalty"
+#     "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-4_position_penalty+length_penalty"
+#     "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-5_position_penalty+length_penalty"
+# )
 
-datasets=("semeval" "inspec" "nus" "krapivin" "kp20k")
+# models_types=(
+#     "retrieval_based_ukg_custom_trained_combined_references_no_titles_nounphrase_v6-1_position_penalty+length_penalty"
+#     "retrieval_based_ukg_custom_trained_combined_references_no_queries_nounphrase_v6-1_position_penalty+length_penalty" 
+#     "retrieval_based_ukg_custom_trained_combined_references_no_cc_nounphrase_v6-1_position_penalty+length_penalty"
+# )
+models_types=("tpg-3")
+
+# datasets=("semeval" "inspec" "nus" "krapivin")
 # datasets=("krapivin")
-# datasets=("kp20k")
+datasets=("kp20k")
 # datasets=("scirepeval_search_validation_evaluation")
 # datasets=("scifact" "scidocs" "trec_covid" "nfcorpus" "doris_mae" "scifact_queries" "scidocs_queries" "trec_covid_queries" "nfcorpus_queries" "doris_mae_queries")
 # datasets=("scifact_queries" "scidocs_queries")
@@ -66,6 +73,7 @@ for dataset in "${datasets[@]}"; do
         # - Perform some operation on the combination
         # - Write the combination to a file
 
-        CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE=$dataset RESULTS_FOLDER=$result_folder MODEL_TO_USE=$model_type python run_keyphrase_prediction_batch.py
+        # CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE=$dataset RESULTS_FOLDER=$result_folder MODEL_TO_USE=$model_type python run_keyphrase_prediction_batch.py
+        CUDA_VISIBLE_DEVICES=2 DATASET_TO_USE=$dataset RESULTS_FOLDER=$result_folder MODEL_TO_USE=$model_type python run_keyphrase_prediction.py
     done
 done

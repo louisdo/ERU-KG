@@ -95,6 +95,7 @@ from src.uokg import keyphrase_generation_batch as keyphrase_generation_batch_uo
 MODEL_TO_USE = os.environ["MODEL_TO_USE"]
 DATASET_TO_USE = os.environ["DATASET_TO_USE"]
 TOP_KS_TO_EVAL= [3,5,10]
+RUN_INDEX = int(os.getenv("RUN_INDEX"), 0)
 
 
 def do_keyphrase_extraction(doc, top_k = 10):
@@ -373,6 +374,15 @@ def do_keyphrase_extraction(doc, top_k = 10):
         return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
                                                         informativeness_model_name="custom_trained_combined_references_nounphrase_v6-5",
                                                         apply_position_penalty=True, length_penalty=-0.25)
+    
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-1_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v7-1",
+                                                        apply_position_penalty=True, length_penalty=-0.25)
+    
+    elif MODEL_TO_USE == "tpg-1":
+        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=1)
     else:
         raise NotImplementedError
 
@@ -428,6 +438,7 @@ print("CPU time:", cpu_time)
 formatted_results = {
     "dataset": DATASET_TO_USE,
     "model": MODEL_TO_USE,
+    "run_index": RUN_INDEX,
     "cpu_time": (cpu_time / 1000000000) / len(dataset),
     "latency": latency / len(dataset),
     "len_dataset": len(dataset)

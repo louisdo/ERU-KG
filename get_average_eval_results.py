@@ -19,7 +19,7 @@ def compute_average_performance(data_path, num_datasets):
 
 
 
-results = compute_average_performance("view_full_16december2024.csv", 5)
+results = compute_average_performance("view_erukg_small.csv", 5)
 
 
 results.to_csv("view_average.csv", index = False)

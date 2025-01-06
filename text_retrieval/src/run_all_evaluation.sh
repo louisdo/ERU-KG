@@ -1,9 +1,13 @@
-# ./trec_covid.sh
+./trec_covid.sh
 
 ./scidocs.sh
 
+# ./ablation_studies.sh
+
 ./scifact.sh
 
-# ./nfcorpus.sh
+./nfcorpus.sh
 
-# ./doris_mae.sh
+./doris_mae.sh
+
+./acm_cr.sh

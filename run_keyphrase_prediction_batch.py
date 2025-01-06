@@ -121,6 +121,22 @@ def do_keyphrase_extraction_batch(docs: list, precomputed_representations: List[
                                                  informativeness_model_name="custom_trained_combined_references_nounphrase_v7-5",
                                                  apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
                                                  precomputed_tokens_scores=precomputed_representations)
+    
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_no_titles_nounphrase_v6-1_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_no_titles_nounphrase_v6-1",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_no_queries_nounphrase_v6-1_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_no_queries_nounphrase_v6-1",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_no_cc_nounphrase_v6-1_position_penalty+length_penalty":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_no_cc_nounphrase_v6-1",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 precomputed_tokens_scores=precomputed_representations)
     else:
         raise NotImplementedError
 

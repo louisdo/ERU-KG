@@ -20,7 +20,7 @@ def process_dataset(dataset_name):
         ds_evaluation = ds["evaluation"]
 
     elif dataset_name == "arxiv_classification":
-        ds = load_from_disk("/scratch/lamdo/arxiv_classification/arxiv_data_t+a")
+        ds = load_from_disk("/scratch/lamdo/arxiv_classification/arxiv_classification_20k")
         ds_evaluation = ds["evaluation"]
     
     ds_evaluation = [dict(row) for row in ds_evaluation]

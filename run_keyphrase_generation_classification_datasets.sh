@@ -24,16 +24,39 @@ models_types=(
     "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-2_position_penalty+length_penalty" 
     "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-3_position_penalty+length_penalty"
 )
-datasets=("scirepeval_fos_test" "scirepeval_mesh_descriptors_test")
+# datasets=("scirepeval_fos_test" "scirepeval_mesh_descriptors_test")
+datasets=("arxiv_classification")
 result_folder="/scratch/lamdo/precompute_keyphrase_extraction/"
 
 for dataset in "${datasets[@]}"; do
     for model_type in "${models_types[@]}"; do
         echo "Config: $dataset - $model_type - $top_k"
 
-        CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE=$dataset RESULTS_FOLDER=$result_folder MODEL_TO_USE=$model_type python run_keyphrase_prediction_batch.py
+        CUDA_VISIBLE_DEVICES=2 DATASET_TO_USE=$dataset RESULTS_FOLDER=$result_folder MODEL_TO_USE=$model_type python run_keyphrase_prediction_batch.py
     done
 done
+
+
+
+# eru-kg-ablations
+models_types=(
+    "retrieval_based_ukg_custom_trained_combined_references_no_titles_nounphrase_v6-1_position_penalty+length_penalty"
+    "retrieval_based_ukg_custom_trained_combined_references_no_queries_nounphrase_v6-1_position_penalty+length_penalty" 
+    "retrieval_based_ukg_custom_trained_combined_references_no_cc_nounphrase_v6-1_position_penalty+length_penalty"
+)
+# datasets=("scirepeval_fos_test" "scirepeval_mesh_descriptors_test")
+# datasets=("scirepeval_fos_test" "arxiv_classification")
+datasets=("arxiv_classification")
+result_folder="/scratch/lamdo/precompute_keyphrase_extraction/"
+
+for dataset in "${datasets[@]}"; do
+    for model_type in "${models_types[@]}"; do
+        echo "Config: $dataset - $model_type - $top_k"
+
+        CUDA_VISIBLE_DEVICES=0 DATASET_TO_USE=$dataset RESULTS_FOLDER=$result_folder MODEL_TO_USE=$model_type python run_keyphrase_prediction_batch.py
+    done
+done
+
 
 
 # autokeygen

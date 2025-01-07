@@ -934,7 +934,7 @@ def process_dataset(dataset_name):
 
         processed_dataset = []
 
-        ds = load_from_disk("/scratch/lamdo/arxiv_classification/arxiv_data_t+a/")
+        ds = load_from_disk("/scratch/lamdo/arxiv_classification/arxiv_classification_20k/")
 
         for line in ds["evaluation"]:
             doc_id = line.get("doc_id")

@@ -23,3 +23,4 @@ results = evaluator.evaluate(EMBEDDING_FILE)
 results["experiment_name"] = EXPERIMENT_NAME
 with open(OUTPUT_FILE, "a+") as f:
     json.dump(results, f)
+    f.write("\n")

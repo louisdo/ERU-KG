@@ -20,7 +20,14 @@ class SimpleDataset:
         if not processing_fn:
             if embed:
                 if type(data_path) == str and os.path.isfile(data_path):
-                    self.data = datasets.load_dataset("json", data_files={"test": data_path})["test"]
+                    import json
+                    print("CHECK:", data_path)
+                    # self.data = datasets.load_dataset("json", data_files={"test": data_path})["test"]
+                    with open(data_path) as f:
+                        temp = json.load(f)
+
+                    self.data = datasets.Dataset.from_list(temp)
+                    print("CHECK: Done load data")
                 else:
                     self.data = datasets.load_dataset(data_path[0], data_path[1], split="evaluation")
             else:

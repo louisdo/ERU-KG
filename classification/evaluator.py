@@ -128,9 +128,10 @@ class SupervisedEvaluator(Evaluator):
 
         Cs = np.logspace(-2, 2, 5)
         if self.task == SupervisedTask.MULTILABEL_CLASSIFICATION:
-            estimator = LinearSVC(max_iter=10000)
-            svm = GridSearchCV(estimator=estimator, cv=cv, param_grid={'C': Cs}, n_jobs=10)
-            svm = OneVsRestClassifier(svm, n_jobs=1)
+            estimator = LinearSVC(max_iter=10000, verbose=True)
+            # svm = GridSearchCV(estimator=estimator, cv=cv, param_grid={'C': Cs}, n_jobs=8)
+            # svm = OneVsRestClassifier(svm, n_jobs=8, verbose=1)
+            svm = OneVsRestClassifier(estimator, n_jobs=8, verbose=1)
         else:
             estimator = LinearSVC(loss="squared_hinge", random_state=RANDOM_STATE)
             if cv:

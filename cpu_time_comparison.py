@@ -1,18 +1,23 @@
 import json, os, time
-from datasets import load_dataset
+# from datasets import load_dataset
 from tqdm import tqdm
 from nltk.stem.porter import PorterStemmer
 from typing import *
 
-from src.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
-from src.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
-from src.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
-# from src.keyBART import generate_keywords as keybart_keyphrase_generation
-from src.process_dataset import process_dataset
-# from src.ukg import generate_keyphrases as ukg_keyphrase_generation
-from src.retrieval_based_ukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
-from src.textrank import keyphrase_extraction as textrank_keyphrase_extraction
-# from pyserini.search.lucene import LuceneSearcher
+# from src.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
+# from src.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
+# from src.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
+# # from src.keyBART import generate_keywords as keybart_keyphrase_generation
+# from src.process_dataset import process_dataset
+# # from src.ukg import generate_keyphrases as ukg_keyphrase_generation
+# from src.retrieval_based_ukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
+# from src.textrank import keyphrase_extraction as textrank_keyphrase_extraction
+# # from pyserini.search.lucene import LuceneSearcher
+
+from src.promptrank_helper.data import data_process_custom, init, process_single_doc
+from src.promptrank import promptrank_keyphrase_generation, get_setting_dict
+from torch.utils.data import DataLoader
+
 
 # this is for uokg
 class Lang:
@@ -88,7 +93,7 @@ class Lang:
     def lookup_tokens(self, indices: List[int], src_tokens: List[str] = None) -> List[str]:
         assert hasattr(self, "vocab"), "Vocab has not been built"
         return [self.lookup_token(index, src_tokens) for index in indices]
-from src.uokg import keyphrase_generation_batch as keyphrase_generation_batch_uokg
+# from src.uokg import keyphrase_generation_batch as keyphrase_generation_batch_uokg
 
 
 
@@ -383,66 +388,110 @@ def do_keyphrase_extraction(doc, top_k = 10):
     elif MODEL_TO_USE == "tpg-1":
         from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
         return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=1)
+    
+    elif MODEL_TO_USE == 'promptrank':
+        from src.promptrank import promptrank_keyphrase_generation
+        # return promptrank_keyphrase_generation(doc, topk=50, model_run_index=1)
     else:
         raise NotImplementedError
 
+
+
 # get entire dataset
-dataset = process_dataset(dataset_name=DATASET_TO_USE)
+# dataset = process_dataset(dataset_name=DATASET_TO_USE)
 
-# this is for loading the model
-do_keyphrase_extraction('test', top_k = 50)
+if MODEL_TO_USE == 'promptrank':
+    setting_dict = get_setting_dict()
+    # init(setting_dict)
+    dataset, doc_list = data_process_custom(setting_dict, DATASET_TO_USE, size = 'small')
+    dataloader = DataLoader(dataset, num_workers=1, batch_size=1)
+    # dataset = list(zip(dataset, doc_list))
+    
+    # do_keyphrase_extraction(dataset[0], top_k = 50)
+    promptrank_keyphrase_generation(doc_list, dataloader, topk=2)
 
+    dataset, doc_list = data_process_custom(setting_dict, DATASET_TO_USE)
+    dataloader = DataLoader(dataset, num_workers=1, batch_size=1)
 
-processed_dataset = []
-start_cpu_time = time.process_time_ns()
-start_time = time.time()
-for sample in tqdm(dataset):
-    document = sample.get("text")
-    present_keyphrases = sample.get("present_keyphrases")
-    absent_keyphrases = sample.get("absent_keyphrases")
+    start_cpu_time = time.process_time_ns()
+    start_time = time.time()
+    # for doc in tqdm(dataset):
+    automatically_extracted_keyphrases = promptrank_keyphrase_generation(doc_list, dataloader, topk = 50)
+        # print(automatically_extracted_keyphrases)
+    end_cpu_time = time.process_time_ns()
+    end_time = time.time()
+    cpu_time = end_cpu_time - start_cpu_time
+    latency = end_time - start_time
 
-    if isinstance(document, str):
-        automatically_extracted_keyphrases = do_keyphrase_extraction(document, top_k = 50)
-        automatically_extracted_keyphrases = {
-            "present_keyphrases":  [item[0] for item in automatically_extracted_keyphrases["present"]],
-            "absent_keyphrases":  [item[0] for item in automatically_extracted_keyphrases["absent"]],
-        }
-    else: 
-        print(type(document))
-        automatically_extracted_keyphrases = {
-            "present_keyphrases": [],
-            "absent_keyphrases": []
-        }
-
-    # line = {
-    #     "document": document,
-    #     "present_keyphrases": present_keyphrases,
-    #     "absent_keyphrases": absent_keyphrases,
-    #     "automatically_extracted_keyphrases": automatically_extracted_keyphrases,
-    # }
-
-    # if DATASET_TO_USE in RETRIEVAL_DATASETS:
-    #     line.pop("document", None)
+    print("CPU time:", cpu_time)
 
 
-    # processed_dataset.append(line)
+    formatted_results = {
+        "dataset": DATASET_TO_USE,
+        "model": MODEL_TO_USE,
+        "run_index": RUN_INDEX,
+        "cpu_time": (cpu_time / 1000000000) / len(doc_list),
+        "latency": latency / len(doc_list),
+        "len_dataset": len(doc_list)
+    }
 
-end_cpu_time = time.process_time_ns()
-end_time = time.time()
-cpu_time = end_cpu_time - start_cpu_time
-latency = end_time - start_time
+else:
+    dataset = process_dataset(dataset_name=DATASET_TO_USE)
 
-print("CPU time:", cpu_time)
+    # this is for loading the model
+    do_keyphrase_extraction('test', top_k = 50)
 
 
-formatted_results = {
-    "dataset": DATASET_TO_USE,
-    "model": MODEL_TO_USE,
-    "run_index": RUN_INDEX,
-    "cpu_time": (cpu_time / 1000000000) / len(dataset),
-    "latency": latency / len(dataset),
-    "len_dataset": len(dataset)
-}
+    processed_dataset = []
+    start_cpu_time = time.process_time_ns()
+    start_time = time.time()
+    for sample in tqdm(dataset):
+        document = sample.get("text")
+        present_keyphrases = sample.get("present_keyphrases")
+        absent_keyphrases = sample.get("absent_keyphrases")
+
+        if isinstance(document, str):
+            automatically_extracted_keyphrases = do_keyphrase_extraction(document, top_k = 50)
+            automatically_extracted_keyphrases = {
+                "present_keyphrases":  [item[0] for item in automatically_extracted_keyphrases["present"]],
+                "absent_keyphrases":  [item[0] for item in automatically_extracted_keyphrases["absent"]],
+            }
+        else: 
+            print(type(document))
+            automatically_extracted_keyphrases = {
+                "present_keyphrases": [],
+                "absent_keyphrases": []
+            }
+
+        # line = {
+        #     "document": document,
+        #     "present_keyphrases": present_keyphrases,
+        #     "absent_keyphrases": absent_keyphrases,
+        #     "automatically_extracted_keyphrases": automatically_extracted_keyphrases,
+        # }
+
+        # if DATASET_TO_USE in RETRIEVAL_DATASETS:
+        #     line.pop("document", None)
+
+
+        # processed_dataset.append(line)
+
+    end_cpu_time = time.process_time_ns()
+    end_time = time.time()
+    cpu_time = end_cpu_time - start_cpu_time
+    latency = end_time - start_time
+
+    print("CPU time:", cpu_time)
+
+
+    formatted_results = {
+        "dataset": DATASET_TO_USE,
+        "model": MODEL_TO_USE,
+        "run_index": RUN_INDEX,
+        "cpu_time": (cpu_time / 1000000000) / len(dataset),
+        "latency": latency / len(dataset),
+        "len_dataset": len(dataset)
+    }
 
 with open("cpu_time_comparison.txt", "a") as f:
     f.write(json.dumps(formatted_results))

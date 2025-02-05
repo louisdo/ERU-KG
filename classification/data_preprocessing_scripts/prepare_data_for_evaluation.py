@@ -14,16 +14,25 @@ def process_dataset(dataset_name):
     if dataset_name == "scirepeval_fos_test":
         ds = load_dataset("allenai/scirepeval", "fos")
         ds_evaluation = ds["evaluation"]
+        ds_evaluation = [dict(row) for row in ds_evaluation]
 
     elif dataset_name == "scirepeval_mesh_descriptors_test":
         ds = load_dataset("allenai/scirepeval", "mesh_descriptors")
         ds_evaluation = ds["evaluation"]
+        ds_evaluation = [dict(row) for row in ds_evaluation]
 
     elif dataset_name == "arxiv_classification":
         ds = load_from_disk("/scratch/lamdo/arxiv_classification/arxiv_classification_20k")
         ds_evaluation = ds["evaluation"]
+        ds_evaluation = [dict(row) for row in ds_evaluation]
     
-    ds_evaluation = [dict(row) for row in ds_evaluation]
+    elif dataset_name == "arxiv_classification_title":
+        ds = load_from_disk("/scratch/lamdo/arxiv_classification/arxiv_classification_20k")
+        ds_evaluation = ds["evaluation"]
+        ds_evaluation = [dict(row) for row in ds_evaluation]
+
+        for i in range(len(ds_evaluation)):
+            ds_evaluation[i]["abstract"] = ""
 
     # print(type(ds_evaluation))
     
@@ -46,10 +55,25 @@ def add_keyphrase_expansion_to_dataset(ds_evaluation,
 
     for i in range(len(all_keyphrase_expansions)):
         keyphrase_expansion = all_keyphrase_expansions[i]
-        present_keyphrases = keyphrase_expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:num_keyphrases_each_type]
-        if not ONLY_PRESENT_KEYPHRASES:
-            absent_keyphrases = keyphrase_expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:num_keyphrases_each_type]
+
+        title = ds_evaluation[i].get("title").replace("\n", " ").lower()
+        abstract = ds_evaluation[i].get("abstract").replace("\n", " ").lower()
+        text = f"{title}\n{abstract}"
+        # need to re-evaluate present and absent
+        all_keyphrases = keyphrase_expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:] + keyphrase_expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:]
+        present_keyphrases = [kw for kw in all_keyphrases if kw in text][:num_keyphrases_each_type]
+        absent_keyphrases = [kw for kw in all_keyphrases if kw not in text][:num_keyphrases_each_type]
+
+        if ONLY_PRESENT_KEYPHRASES == 0:
+            # get both present and absent
+            pass
+        elif ONLY_PRESENT_KEYPHRASES == -1:
+            # get only absent
+            present_keyphrases = []
+            # absent_keyphrases = keyphrase_expansion.get("automatically_extracted_keyphrases", {}).get("absent_keyphrases", [])[:num_keyphrases_each_type]
         else:
+            # get only present
+            # present_keyphrases = keyphrase_expansion.get("automatically_extracted_keyphrases", {}).get("present_keyphrases", [])[:num_keyphrases_each_type]
             absent_keyphrases = []
 
         kw_exp = ", ".join(present_keyphrases + absent_keyphrases)

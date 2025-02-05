@@ -105,10 +105,15 @@ RUN_INDEX = int(os.getenv("RUN_INDEX"), 0)
 
 def do_keyphrase_extraction(doc, top_k = 10):
     if MODEL_TO_USE == "embedrank_sent2vec":
-        return embedrank_keyphrase_extraction(doc, embed_func=embed_sentences_sent2vec, top_k = top_k)
+        res = embedrank_keyphrase_extraction(doc, embed_func=embed_sentences_sent2vec, top_k = top_k)
+        print(res)
+        return res
     
     elif MODEL_TO_USE == "embedrank_sentence_transformers_all-MiniLM-L6-v2":
         return embedrank_keyphrase_extraction(doc, embed_func=embed_sentences_sentence_transformer, top_k = top_k)
+    
+    elif MODEL_TO_USE == "embedrank_sentence_transformers_all-MiniLM-L12-v2":
+        return embedrank_keyphrase_extraction(doc, embed_func=lambda x: embed_sentences_sentence_transformer(x, model_name = "sentence-transformers/all-MiniLM-L12-v2"))
 
     elif MODEL_TO_USE == "embedrank_sentence_transformers_multi-qa-MiniLM-L6-cos-v1":
         return embedrank_keyphrase_extraction(doc, embed_func=lambda x: embed_sentences_sentence_transformer(x, model_name = "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"))
@@ -385,6 +390,24 @@ def do_keyphrase_extraction(doc, top_k = 10):
                                                         informativeness_model_name="custom_trained_combined_references_nounphrase_v7-1",
                                                         apply_position_penalty=True, length_penalty=-0.25)
     
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_alpha_1":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-1",
+                                                        apply_position_penalty=True, length_penalty=-0.25, alpha = 1)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-1_position_penalty+length_penalty_alpha_1":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v7-1",
+                                                        apply_position_penalty=True, length_penalty=-0.25, alpha = 1)
+    
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_10":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-1",
+                                                        apply_position_penalty=True, length_penalty=-0.25, neighbor_size=10)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-1_position_penalty+length_penalty_neighborsize_10":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v7-1",
+                                                        apply_position_penalty=True, length_penalty=-0.25, neighbor_size=10)
+    
     elif MODEL_TO_USE == "tpg-1":
         from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
         return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=1)
@@ -392,6 +415,11 @@ def do_keyphrase_extraction(doc, top_k = 10):
     elif MODEL_TO_USE == 'promptrank':
         from src.promptrank import promptrank_keyphrase_generation
         # return promptrank_keyphrase_generation(doc, topk=50, model_run_index=1)
+
+    elif MODEL_TO_USE == "nounphrase_extraction_1_5":
+        return nounphrase_extraction_as_keyphrase_generation(doc, [1, 5])
+    elif MODEL_TO_USE == "nounphrase_extraction_2_5":
+        return nounphrase_extraction_as_keyphrase_generation(doc, [2, 5])
     else:
         raise NotImplementedError
 
@@ -493,7 +521,7 @@ else:
         "len_dataset": len(dataset)
     }
 
-with open("cpu_time_comparison.txt", "a") as f:
+with open("cpu_time_comparison_full_threads.txt", "a") as f:
     f.write(json.dumps(formatted_results))
     f.write("\n")
 

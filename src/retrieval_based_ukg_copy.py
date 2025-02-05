@@ -272,7 +272,7 @@ from typing import List, Dict
 from collections import Counter
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 from splade.models.transformer_rep import Splade
-from src.retrieval_based_phraseness_module import RetrievalBasedPhrasenessModule
+from src.retrieval_based_phraseness_module_copy import RetrievalBasedPhrasenessModule
 from src.splade_inference import SPLADE_MODEL, get_tokens_scores_of_doc, get_tokens_scores_of_docs_batch, init_splade_model
 
 
@@ -357,7 +357,7 @@ def merge_and_average_dicts(dict_list: List[Dict[str, float]], weights: List[flo
     # Divide by the number of dictionaries
     # num_dicts = len(dict_list)
     # return Counter({k: v / num_dicts for k, v in combined.items()})
-    return combined
+    return Counter(combined)
 
 
 def score_candidates_by_positions(candidates: List[str], doc: str):
@@ -389,11 +389,11 @@ def score_candidates(candidates: List[str],
     one_minus_alpha = 1 - alpha
     candidates_scores = [np.sum([alpha * tokens_scores[tok] + one_minus_alpha * averaged_retrieved_documents_tokens_scores[tok] for tok in tokenized_cand]) / (len(tokenized_cand) - length_penalty) for tokenized_cand in tokenized_candidates]
 
-    if candidates_phraseness_scores:
-        candidates_scores = [score * (candidates_phraseness_scores[candidates[i]] ** 1.5) for i, score in enumerate(candidates_scores)]
+    # if candidates_phraseness_scores:
+    #     candidates_scores = [score * (candidates_phraseness_scores[candidates[i]] ** 1.5) for i, score in enumerate(candidates_scores)]
 
-    if candidates_positions_scores:
-        candidates_scores = [score * candidates_positions_scores[candidates[i]] for i, score in enumerate(candidates_scores)]
+    # if candidates_positions_scores:
+    #     candidates_scores = [score * candidates_positions_scores[candidates[i]] for i, score in enumerate(candidates_scores)]
     assert len(candidates) == len(candidates_scores)
     return [(cand, score) for cand, score in zip(candidates, candidates_scores)]
 
@@ -404,11 +404,9 @@ def keyphrase_generation(doc: str,
                         informativeness_model_name: str = "",
                         apply_position_penalty: bool = False,
                         length_penalty: float = 0,
-                        precomputed_tokens_scores: dict = None,
-                        alpha = 0.8,
-                        neighbor_size: int = 100):
+                        precomputed_tokens_scores: dict = None):
     
-    init_phraseness_module(informativeness_model_name, alpha = alpha, neighbor_size=neighbor_size)
+    init_phraseness_module(informativeness_model_name)
     init_splade_model(informativeness_model_name)
 
     lower_doc = doc.lower()
@@ -418,6 +416,7 @@ def keyphrase_generation(doc: str,
         tokens_scores = get_tokens_scores_of_doc(doc_tokens = doc_tokens, model_name = informativeness_model_name)
     else:
         tokens_scores = precomputed_tokens_scores
+    print(tokens_scores)
 
     phraseness_module_output = PHRASENESS_MODULE[informativeness_model_name](
         doc, return_retrieved_documents_vectors=True, return_retrieved_documents_scores=True)
@@ -450,12 +449,8 @@ def keyphrase_generation(doc: str,
     # present_indices = [i for i in range(len(candidates_tokens)) if is_sublist(candidates_tokens[i], doc_tokens["input_ids"].tolist()[0])]
     # absent_indices = [i for i in range(len(candidates_tokens)) if i not in present_indices]
 
-    if alpha < 1:
-        present_indices = [i for i in range(len(candidates)) if candidates[i] in lower_doc]
-        absent_indices = [i for i in range(len(candidates_tokens)) if i not in present_indices]
-    else: 
-        present_indices = list(range(len(candidates)))
-        absent_indices = []
+    present_indices = [i for i in range(len(candidates)) if candidates[i] in lower_doc]
+    absent_indices = [i for i in range(len(candidates_tokens)) if i not in present_indices]
 
     present_candidates_scores = [scores[i] for i in present_indices]
     present_candidates_scores = list(sorted(present_candidates_scores, key = lambda x: -x[1]))
@@ -517,11 +512,10 @@ def keyphrase_generation_batch(
     apply_position_penalty: bool = False,
     length_penalty: int = 0,
     precomputed_tokens_scores: dict = None,
-    alpha: float = 0.75,
-    neighbor_size = 100):
+    alpha: float = 0.75):
 
     init_splade_model(informativeness_model_name)
-    init_phraseness_module(informativeness_model_name, neighbor_size = neighbor_size)
+    init_phraseness_module(informativeness_model_name)
 
     PHRASENESS_MODULE[informativeness_model_name]._set_alpha(alpha)
 

@@ -3,13 +3,14 @@ from datasets import load_dataset
 from tqdm import tqdm
 
 
-OUTPUT_FILE = "/scratch/lamdo/pyserini_experiments/scirepeval_collections/corpus/scirepeval_search_evaluation.jsonl"
+OUTPUT_FILE = "/scratch/lamdo/pyserini_experiments/scirepeval_collections/corpus/scirepeval_search_validation_evaluation.jsonl"
 
 ds = load_dataset("allenai/scirepeval", "search")
 
 
+
 def get_all_documents_from_scirepeval_search_dataset(ds, filename):
-    splits = ["evaluation"] #, "train"][:2]
+    splits = ["validation", "evaluation"] #, "train"][:2]
 
     count = 0
 

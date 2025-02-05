@@ -7,3 +7,5 @@
 ./nfcorpus.sh
 
 ./doris_mae.sh
+
+./acm_cr.sh

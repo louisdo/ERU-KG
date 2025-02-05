@@ -22,6 +22,9 @@ GROUPS["EmbedRank"] = ["embedrank_sent2vec"]
 GROUPS["TextRank"] = ["textrank"]
 GROUPS["MultiPartiteRank"] = ["multipartiterank"]
 GROUPS["PromptRank"] = ["promptrank"]
+GROUPS["ERU-KG-base [only extract]"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-{i}_position_penalty+length_penalty_alpha_1" for i in range(1, 4)]
+GROUPS["ERU-KG-small [only extract]"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-{i}_position_penalty+length_penalty_alpha_1" for i in range(1, 4)]
+GROUPS["PromptKP"] = ["promptkp"]
 
 
 def get_group_name_and_run_index_from_experiment_name(name):

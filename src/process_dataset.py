@@ -858,6 +858,29 @@ def process_dataset(dataset_name):
             processed_dataset.append(processed_line)
         return processed_dataset
     
+    elif dataset_name == "scirepeval_fos_test_title":
+        processed_dataset = []
+
+        ds = load_dataset("allenai/scirepeval", "fos")
+
+        for line in ds["evaluation"]:
+            doc_id = line.get("doc_id")
+            title = line.get("title")
+            # abstract = line.get("abstract")
+
+            text = f"{title.lower()}"
+            text_not_lowered = f"{title}"
+            processed_line = {
+                "doc_id": doc_id,
+                "text": text,
+                "text_not_lowered": text_not_lowered,
+                "present_keyphrases": [],
+                "absent_keyphrases": []
+            }
+
+            processed_dataset.append(processed_line)
+        return processed_dataset
+    
     elif dataset_name == "scirepeval_mesh_descriptors_test":
         processed_dataset = []
 
@@ -952,6 +975,61 @@ def process_dataset(dataset_name):
             }
 
             processed_dataset.append(processed_line)
+        return processed_dataset
+    
+    elif dataset_name == "arxiv_classification_title":
+        from datasets import load_from_disk
+
+        processed_dataset = []
+
+        ds = load_from_disk("/scratch/lamdo/arxiv_classification/arxiv_classification_20k/")
+
+        for line in ds["evaluation"]:
+            doc_id = line.get("doc_id")
+            title = line.get("title")
+            # abstract = line.get("abstract")
+
+            text = f"{title.lower()}"
+            text_not_lowered = f"{title}"
+            processed_line = {
+                "doc_id": doc_id,
+                "text": text,
+                "text_not_lowered": text_not_lowered,
+                "present_keyphrases": [],
+                "absent_keyphrases": []
+            }
+
+            processed_dataset.append(processed_line)
+        return processed_dataset
+    elif dataset_name == "combined_kg":
+        processed_dataset = []
+        for ds_name in ["semeval", "inspec", "nus", "krapivin"]:
+            df = pd.read_json(f"hf://datasets/memray/{ds_name}/test.json", lines=True)
+
+            for line in df.to_dict("records"):
+                doc_id = line.get("name")
+                title = line.get("title")
+                abstract = line.get("abstract")
+
+                text = f"{title.lower()}\n{abstract.lower()}"
+                text_not_lowered = f"{title}\n{abstract}"
+
+                keyphrases = line.get("keywords").split(";")
+                keyphrases = [kw.strip().lower() for kw in keyphrases if kw]
+
+                present_keyphrases = [kw for kw in keyphrases if kw in text]
+                absent_keyphrases = [kw for kw in keyphrases if kw not in text]
+
+                processed_line = {
+                    "doc_id": doc_id,
+                    "text": text,
+                    "text_not_lowered": text_not_lowered,
+                    "present_keyphrases": present_keyphrases,
+                    "absent_keyphrases": absent_keyphrases
+                }
+
+                processed_dataset.append(processed_line)
+        
         return processed_dataset
     else:
         raise NotImplementedError

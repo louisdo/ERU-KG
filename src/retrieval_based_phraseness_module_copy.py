@@ -23,8 +23,6 @@ class DocumentRetriever:
         if not query: return []
         
         hits = self.searcher.search(query, k = top_k, fields=fields)
-        # hits = self.searcher.batch_search([query], qids = [str(_) for _ in list(range(1))], k=top_k, threads=4, fields=fields).get("0", [])
-        # print(hits)
 
         res = []
         for line in hits:
@@ -147,7 +145,13 @@ class RetrievalBasedPhrasenessModule:
         return phrase_vocab, docid2phraseid, docid2tokenscore
 
     def _extract(self, doc):
-        return self.candext(doc)
+        nounphrases =  self.candext(doc)
+        with open("temp_extract_gitig_.json", "w") as f:
+            json.dump({
+                "nounphrases": nounphrases
+            }, f)
+
+        return nounphrases
     
     def _extract_batch(self, docs):
         return [self.candext(doc) for doc in docs]
@@ -173,15 +177,30 @@ class RetrievalBasedPhrasenessModule:
             # print(raws[0])
 
             all_nounphrases = Counter()
+            raws = []
             for docid, doc_score in zip(docids, scores):
                 nounphrases = [self.phrase_glossary[j] for j in self.docid2phraseid[docid]]
-
+                raws.append({
+                    "docid": docid,
+                    "doc_score": doc_score,
+                    "nounphrases": nounphrases,
+                    "document_vector": self.docid2tokenscore[docid]
+                })
                 if nounphrases: 
                     _temp = doc_score / len(nounphrases)
                     for nounp in nounphrases:
                         all_nounphrases[nounp] += _temp
 
             # return all_nounphrases
+                        
+            with open("temp_retrieve_gitig_.json", "w") as f:
+                print("check", raws)
+                json.dump(raws, f)
+
+            with open("temp_retrieve_nx_gitig_.json", "w") as f:
+                json.dump(Counter(dict(all_nounphrases.most_common(100))), f)
+
+
             return Counter(dict(all_nounphrases.most_common(100))), retrieved_documents_vectors, scores
             # return all_nounphrases, retrieved_documents_vectors
         except Exception as e:
@@ -266,6 +285,9 @@ class RetrievalBasedPhrasenessModule:
 
         if return_retrieved_documents_scores:
             res["retrieved_documents_scores"] = retrieved_documents_scores
+
+        with open("temp_final_phraseness_gitig_.json", "w") as f:
+            json.dump(res, f)
         
         return res
     

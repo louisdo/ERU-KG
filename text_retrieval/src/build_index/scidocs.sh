@@ -9,8 +9,8 @@
 # python scidocs.py
 
 
-for i in $(seq 1 3);
-do
+# for i in $(seq 1 3);
+# do
     # OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scidocs_collections/pyserini_formatted_collection_uokg-${i}" \
     # KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scidocs--uokg-${i}.json" \
     # INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scidocs_keyphrase_expansion_uokg-${i}" \
@@ -41,12 +41,12 @@ do
     # NUMBER_OF_KEYWORDS_EACH_TYPE=10 \
     # python scidocs.py
 
-    OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scidocs_collections/pyserini_formatted_collection_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty" \
-    KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scidocs--retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty.json" \
-    INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scidocs_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty" \
-    EXPANSION_ONLY_PRESENT_KEYPHRASES=0 \
-    NUMBER_OF_KEYWORDS_EACH_TYPE=10 \
-    python scidocs.py
+    # OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scidocs_collections/pyserini_formatted_collection_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty" \
+    # KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scidocs--retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty.json" \
+    # INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scidocs_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty" \
+    # EXPANSION_ONLY_PRESENT_KEYPHRASES=0 \
+    # NUMBER_OF_KEYWORDS_EACH_TYPE=10 \
+    # python scidocs.py
 
 
     #------------------------------------------------------------------
@@ -82,13 +82,28 @@ do
     # NUMBER_OF_KEYWORDS_EACH_TYPE=10 \
     # python scidocs.py
 
-    OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scidocs_collections/pyserini_formatted_collection_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty" \
-    KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scidocs--retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty.json" \
-    INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scidocs_only_present_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty" \
-    EXPANSION_ONLY_PRESENT_KEYPHRASES=1 \
-    NUMBER_OF_KEYWORDS_EACH_TYPE=10 \
-    python scidocs.py
+    # OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scidocs_collections/pyserini_formatted_collection_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty" \
+    # KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scidocs--retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty.json" \
+    # INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scidocs_only_present_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-${i}_position_penalty+length_penalty" \
+    # EXPANSION_ONLY_PRESENT_KEYPHRASES=1 \
+    # NUMBER_OF_KEYWORDS_EACH_TYPE=10 \
+    # python scidocs.py
 
 
     # echo "input${i}_now"
-done
+# done
+
+
+OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scidocs_collections/pyserini_formatted_collection_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_10" \
+KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scidocs--retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_10.json" \
+INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scidocs_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_10" \
+EXPANSION_ONLY_PRESENT_KEYPHRASES=0 \
+NUMBER_OF_KEYWORDS_EACH_TYPE=10 \
+python scidocs.py
+
+OUTPUT_FOLDER="/scratch/lamdo/pyserini_experiments/scidocs_collections/pyserini_formatted_collection_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_50" \
+KEYWORD_FOR_DOCUMENT_EXPANSION="/scratch/lamdo/precompute_keyphrase_extraction/scidocs--retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_50.json" \
+INDEX_FOLDER="/scratch/lamdo/pyserini_experiments/index/scidocs_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_50" \
+EXPANSION_ONLY_PRESENT_KEYPHRASES=0 \
+NUMBER_OF_KEYWORDS_EACH_TYPE=10 \
+python scidocs.py

@@ -1,8 +1,9 @@
 # CUDA_VISIBLE_DEVICES=-1 DATASET_TO_USE="combined_kg" MODEL_TO_USE="copyrnn-1" python cpu_time_comparison.py
 # 795.3976709599999
 
-# CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE="semeval" RUN_INDEX=1 MODEL_TO_USE="promptrank" python cpu_time_comparison.py
-# CUDA_VISIBLE_DEVICES=-1 DATASET_TO_USE="semeval" RUN_INDEX=1 MODEL_TO_USE="promptrank" python cpu_time_comparison.py
+CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE="semeval" RUN_INDEX=1 MODEL_TO_USE="promptrank" python cpu_time_comparison.py
+CUDA_VISIBLE_DEVICES=-1 DATASET_TO_USE="semeval" RUN_INDEX=1 MODEL_TO_USE="promptrank" python cpu_time_comparison.py
+
 
 # export OMP_NUM_THREADS=1
 # export MKL_NUM_THREADS=1

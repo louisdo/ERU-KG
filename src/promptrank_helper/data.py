@@ -22,7 +22,25 @@ StanfordCoreNLP_path = '/home/abodke2/kpg/stanford-corenlp-full-2018-02-27'
 
 stopword_dict = set(stopwords.words('english'))
 en_model = StanfordCoreNLP(StanfordCoreNLP_path, quiet=True)
-tokenizer = None
+# tokenizer = None
+
+
+
+
+def get_setting_dict():
+    setting_dict = {}
+    setting_dict["max_len"] = 512
+    setting_dict["temp_en"] = "Book:"
+    setting_dict["temp_de"] = "This book mainly talks about "
+    setting_dict["model"] = "small"
+    setting_dict["enable_filter"] = False
+    setting_dict["enable_pos"] = True
+    setting_dict["position_factor"] = 1.2e8
+    setting_dict["length_factor"] = 0.6
+    return setting_dict
+
+setting_dict = get_setting_dict()
+tokenizer = T5Tokenizer.from_pretrained("t5-" + setting_dict["model"], model_max_length=setting_dict["max_len"] )
 
 GRAMMAR = """  NP:
         {<NN.*|JJ>*<NN.*>}  # Adjective(s)(optional) + Noun(s)"""
@@ -174,7 +192,7 @@ def remove (text):
     else:
         return False
     
-def generate_doc_pairs(doc, candidates, idx):
+def generate_doc_pairs(doc, candidates):
     count = 0
     doc_pairs = []
     
@@ -203,7 +221,7 @@ def generate_doc_pairs(doc, candidates, idx):
 #         for i in x[0]:
 #             print(tokenizer.decode(i))
 #         exit(0)
-        dic = {"de_input_len":de_input_len, "candidate":candidate, "idx":idx, "pos":can_and_pos[1][0]}
+        dic = {"de_input_len":de_input_len, "candidate":candidate, 'idx' : 0, "pos":can_and_pos[1][0]}
         
         doc_pairs.append([en_input_ids, en_input_mask, de_input_ids, dic])
         # print(tokenizer.decode(en_input_ids[0]))
@@ -213,6 +231,7 @@ def generate_doc_pairs(doc, candidates, idx):
         # print()
         # exit(0)
     return doc_pairs, count
+
 
 def init(setting_dict):
     '''
@@ -225,9 +244,10 @@ def init(setting_dict):
     temp_de = setting_dict["temp_de"]
     enable_filter = setting_dict["enable_filter"]
 
-    tokenizer = T5Tokenizer.from_pretrained("t5-" + setting_dict["model"], model_max_length=MAX_LEN)
+    # tokenizer = T5Tokenizer.from_pretrained("t5-" + setting_dict["model"], model_max_length=MAX_LEN)
 
-def process_single_doc(doc, idx):
+def process_single_doc(doc, setting_dict):
+    init(setting_dict)
     text_obj = InputTextObj(en_model, doc)
     
     candidates = []
@@ -238,7 +258,7 @@ def process_single_doc(doc, idx):
     
     formatted_doc = temp_en + "\"" + doc + "\""
     
-    doc_pairs, removed_count = generate_doc_pairs(formatted_doc, candidates, idx)
+    doc_pairs, removed_count = generate_doc_pairs(formatted_doc, candidates)
     dataset = KPE_Dataset(doc_pairs)
     # en_model.close()
 

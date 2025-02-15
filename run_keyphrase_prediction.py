@@ -111,7 +111,9 @@ def do_keyphrase_extraction(doc, top_k = 10):
 
     elif MODEL_TO_USE == "embedrank_sentence_transformers_multi-qa-MiniLM-L6-cos-v1":
         return embedrank_keyphrase_extraction(doc, embed_func=lambda x: embed_sentences_sentence_transformer(x, model_name = "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"))
-    
+    elif MODEL_TO_USE == "embedrank_sentence_transformers_all-MiniLM-L12-v2":
+        return embedrank_keyphrase_extraction(doc, embed_func=lambda x: embed_sentences_sentence_transformer(x, model_name = "sentence-transformers/all-MiniLM-L12-v2"))
+
     elif MODEL_TO_USE == "multipartiterank":
         return multipartiterank_keyphrase_extraction(doc, top_k)
     

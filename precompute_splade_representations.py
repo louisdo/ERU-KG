@@ -22,6 +22,20 @@
 # CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_no_queries_v6-1" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
 # CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_no_cc_v6-1" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
 
+# CUDA_VISIBLE_DEVICES=2 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_v8-1" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
+# CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_v8-2" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
+# CUDA_VISIBLE_DEVICES=0 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_v8-3" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
+
+
+# CUDA_VISIBLE_DEVICES=2 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_v9-1" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
+# CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_v9-2" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
+# CUDA_VISIBLE_DEVICES=0 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_v9-3" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
+
+
+# CUDA_VISIBLE_DEVICES=0 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_no_titles_v8-1" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
+# CUDA_VISIBLE_DEVICES=1 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_no_queries_v8-1" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
+# CUDA_VISIBLE_DEVICES=2 DATASET_TO_USE="scirepeval_search_validation_evaluation" INFORMATIVENESS_MODEL_NAME="custom_trained_combined_references_no_cc_v8-1" OUTPUT_FOLDER="/scratch/lamdo/precompute_sparse_representations" python precompute_splade_representations.py
+
 
 import os, json
 from tqdm import tqdm

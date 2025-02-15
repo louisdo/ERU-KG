@@ -1,7 +1,7 @@
 models_to_include=(
-    # "tpg-1"
-    # "tpg-2"
-    # "tpg-3"
+    "tpg-1"
+    "tpg-2"
+    "tpg-3"
     # "autokeygen-1"
     # "autokeygen-2"
     # "autokeygen-3"
@@ -21,8 +21,24 @@ models_to_include=(
     # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-1_position_penalty+length_penalty"
     # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-2_position_penalty+length_penalty"
     # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-3_position_penalty+length_penalty"
-    retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_10
-    retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_50
+    # retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_10
+    # retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_50
+    # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-1_position_penalty+length_penalty"
+    # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-2_position_penalty+length_penalty"
+    # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-3_position_penalty+length_penalty"
+    # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v9-1_position_penalty+length_penalty"
+    # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v9-2_position_penalty+length_penalty"
+    # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v9-3_position_penalty+length_penalty"
+
+    # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-1_position_penalty+length_penalty_neighborsize_10"
+    # "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-1_position_penalty+length_penalty_neighborsize_50"
+    # "retrieval_based_ukg_custom_trained_combined_references_no_titles_nounphrase_v8-1_position_penalty+length_penalty"
+    # "retrieval_based_ukg_custom_trained_combined_references_no_queries_nounphrase_v8-1_position_penalty+length_penalty" 
+    # "retrieval_based_ukg_custom_trained_combined_references_no_cc_nounphrase_v8-1_position_penalty+length_penalty"
+
+    # embedrank_sentence_transformers_all-MiniLM-L12-v2
+
+
 )
 
 join_by() {

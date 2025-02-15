@@ -117,7 +117,6 @@ class CandidateExtractorRegExpNLTK:
             #     if cands_counter[cand] == 1: cands.append(cand) # change to == if you dont want multiset
             # else:
             #     if cands_counter[cand] == 2: cands.append(cand) # change to == if you dont want multiset
-        print(len(list(cands)), len([candidate for candidate in list(cands) if cands_counter[candidate] > 1]))
         return [candidate.lower() for candidate in list(cands)]
     
 

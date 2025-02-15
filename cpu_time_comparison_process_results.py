@@ -3,7 +3,7 @@ import pandas as pd
 from copy import deepcopy
 
 
-with open("cpu_time_comparison.txt") as f:
+with open("gpu_time_comparison.txt") as f:
     eval_data = []
     for line in f:
         eval_data.append(json.loads(line))
@@ -24,7 +24,14 @@ GROUPS["MultiPartiteRank"] = ["multipartiterank"]
 GROUPS["PromptRank"] = ["promptrank"]
 GROUPS["ERU-KG-base [only extract]"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-{i}_position_penalty+length_penalty_alpha_1" for i in range(1, 4)]
 GROUPS["ERU-KG-small [only extract]"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-{i}_position_penalty+length_penalty_alpha_1" for i in range(1, 4)]
+
+GROUPS["ERU-KG-base [neighbor size 10]"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-{i}_position_penalty+length_penalty_neighborsize_10" for i in range(1, 4)]
+GROUPS["ERU-KG-base [neighbor size 50]"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-{i}_position_penalty+length_penalty_neighborsize_50" for i in range(1, 4)]
+GROUPS["ERU-KG-small [neighbor size 10]"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-{i}_position_penalty+length_penalty_neighborsize_10" for i in range(1, 4)]
+
+GROUPS["EmbedRank [SBERT]"] = ["embedrank_sentence_transformers_all-MiniLM-L12-v2"]
 GROUPS["PromptKP"] = ["promptkp"]
+GROUPS["PromptRank"] = ["promptrank"]
 
 
 def get_group_name_and_run_index_from_experiment_name(name):
@@ -33,7 +40,8 @@ def get_group_name_and_run_index_from_experiment_name(name):
             if not run_name: continue
             if run_name ==name:
                 return group, i
-            
+    
+    print(name)
     return None, None
 
 new_eval_data = []
@@ -58,4 +66,4 @@ second_column = df.pop('run_index')
 df.insert(1, 'run_index', second_column)
 
 
-df.to_csv("cpu_time_comparison.csv", index=False)
+df.to_csv("gpu_time_comparison.csv", index=False)

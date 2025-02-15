@@ -316,12 +316,36 @@ def init_phraseness_module(model_name, neighbor_size = 100, alpha = 0.8):
     elif model_name == "custom_trained_combined_references_nounphrase_v7-5":
         path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v7-5"
 
+    elif model_name == "custom_trained_combined_references_nounphrase_v8-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v8-1"
+    elif model_name == "custom_trained_combined_references_nounphrase_v8-2":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v8-2"
+    elif model_name == "custom_trained_combined_references_nounphrase_v8-3":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v8-3"
+
+
+    elif model_name == "custom_trained_combined_references_nounphrase_v9-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v9-1"
+    elif model_name == "custom_trained_combined_references_nounphrase_v9-2":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v9-2"
+    elif model_name == "custom_trained_combined_references_nounphrase_v9-3":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v9-3"
+
     elif model_name == "custom_trained_combined_references_no_titles_nounphrase_v6-1":
         path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_titles_v6-1"
     elif model_name == "custom_trained_combined_references_no_queries_nounphrase_v6-1":
         path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_queries_v6-1"
     elif model_name == "custom_trained_combined_references_no_cc_nounphrase_v6-1":
         path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_cc_v6-1"
+
+
+    elif model_name == "custom_trained_combined_references_no_titles_nounphrase_v8-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_titles_v8-1"
+    elif model_name == "custom_trained_combined_references_no_queries_nounphrase_v8-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_queries_v8-1"
+    elif model_name == "custom_trained_combined_references_no_cc_nounphrase_v8-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_cc_v8-1"
+        
     else:
         # for now this is the default path
         path = "/scratch/lamdo/pyserini_experiments/index/scirepeval_search_validation_evaluation_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_v6_position_penalty+length_penalty"

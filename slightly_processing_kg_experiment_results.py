@@ -5,12 +5,19 @@ from copy import deepcopy
 
 GROUPS = {}
 
-GROUPS["ERU-KG-base"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-{i}_position_penalty+length_penalty" for i in range(1, 4)]
-GROUPS["ERU-KG-small"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-{i}_position_penalty+length_penalty" for i in range(1, 4)]
+GROUPS["ERU-KG-base"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-{i}_position_penalty+length_penalty" for i in range(1, 4)]
+GROUPS["ERU-KG-base (no queries)"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_queries_nounphrase_v8-{i}_position_penalty+length_penalty" for i in range(1, 4)]
+GROUPS["ERU-KG-base (no titles)"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_titles_nounphrase_v8-{i}_position_penalty+length_penalty" for i in range(1, 4)]
+GROUPS["ERU-KG-base (no cc)"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_cc_nounphrase_v8-{i}_position_penalty+length_penalty" for i in range(1, 4)]
+GROUPS["ERU-KG-base (neighbor size 50)"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-{i}_position_penalty+length_penalty_neighborsize_50" for i in range(1, 4)]
+GROUPS["ERU-KG-base (neighbor size 10)"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-{i}_position_penalty+length_penalty_neighborsize_10" for i in range(1, 4)]
+
+GROUPS["ERU-KG-small"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v9-{i}_position_penalty+length_penalty" for i in range(1, 4)]
 GROUPS["AutoKeyGen"] = [f"autokeygen-{i}" for i in range(1, 4)]
 GROUPS["UOKG"] = [f"uokg-{i}" for i in range(1, 4)]
 GROUPS["CopyRNN"] = [f"copyrnn-{i}" for i in range(1, 4)]
 GROUPS["TPG"] = [f"tpg-{i}" for i in range(1, 4)]
+GROUPS["EmbedRank (SBERT)"] = ["embedrank_sentence_transformers_all-MiniLM-L12-v2"]
 GROUPS["EmbedRank"] = ["embedrank_sent2vec"]
 GROUPS["TextRank"] = ["textrank"]
 GROUPS["MultiPartiteRank"] = ["multipartiterank"]
@@ -33,7 +40,7 @@ def compute_average_performance(input_df):
 
     return avg_df
 
-df = pd.read_csv("view.csv")
+df = pd.read_csv("view_12feb2025.csv")
 
 processed_dataset = []
 for line in df.to_dict("records"):
@@ -43,6 +50,9 @@ for line in df.to_dict("records"):
     model_name = line.get("model_name")
 
     group_name, run_index = get_group_name_and_run_index_from_experiment_name(model_name)
+    if not group_name:
+        print(model_name)
+        continue
     newline["model_name"] = group_name
     newline["run_index"] = run_index
 
@@ -61,4 +71,5 @@ newdf.insert(1, 'model_name', second_column)
 third_column = newdf.pop('run_index')
 newdf.insert(2, 'run_index', third_column)
 
-newdf.to_csv("view_processed.csv", index=False)
+print(newdf)
+newdf.to_csv("view_processed_12feb2025.csv", index=False)

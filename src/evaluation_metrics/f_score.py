@@ -18,7 +18,7 @@ def process_kp(_kps, remove_unigram = False):
         tokenized = nltk.word_tokenize(kp)
         processed_kp = []
         for tok in tokenized:
-            processed_kp.append(STEMMER.stem(tok))
+            processed_kp.append(STEMMER.stem(tok).lower())
         res.append(" ".join(processed_kp))
     return list(res)
 

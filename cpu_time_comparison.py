@@ -4,19 +4,15 @@ from tqdm import tqdm
 from nltk.stem.porter import PorterStemmer
 from typing import *
 
-# from src.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
-# from src.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
-# from src.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
-# # from src.keyBART import generate_keywords as keybart_keyphrase_generation
-# from src.process_dataset import process_dataset
-# # from src.ukg import generate_keyphrases as ukg_keyphrase_generation
-# from src.retrieval_based_ukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
-# from src.textrank import keyphrase_extraction as textrank_keyphrase_extraction
-# # from pyserini.search.lucene import LuceneSearcher
-
-from src.promptrank_helper.data import data_process_custom, init, process_single_doc
-from src.promptrank import promptrank_keyphrase_generation, get_setting_dict
-from torch.utils.data import DataLoader
+from src.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
+from src.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
+from src.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
+# from src.keyBART import generate_keywords as keybart_keyphrase_generation
+from src.process_dataset import process_dataset
+# from src.ukg import generate_keyphrases as ukg_keyphrase_generation
+from src.retrieval_based_ukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
+from src.textrank import keyphrase_extraction as textrank_keyphrase_extraction
+# from pyserini.search.lucene import LuceneSearcher
 
 
 # this is for uokg
@@ -403,6 +399,10 @@ def do_keyphrase_extraction(doc, top_k = 10):
         return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
                                                         informativeness_model_name="custom_trained_combined_references_nounphrase_v6-1",
                                                         apply_position_penalty=True, length_penalty=-0.25, neighbor_size=10)
+    elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty_neighborsize_50":
+        return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-1",
+                                                        apply_position_penalty=True, length_penalty=-0.25, neighbor_size=50)
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-1_position_penalty+length_penalty_neighborsize_10":
         return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
                                                         informativeness_model_name="custom_trained_combined_references_nounphrase_v7-1",
@@ -429,6 +429,9 @@ def do_keyphrase_extraction(doc, top_k = 10):
 # dataset = process_dataset(dataset_name=DATASET_TO_USE)
 
 if MODEL_TO_USE == 'promptrank':
+    from src.promptrank_helper.data import data_process_custom, init, process_single_doc
+    from src.promptrank import promptrank_keyphrase_generation, get_setting_dict
+    from torch.utils.data import DataLoader
     setting_dict = get_setting_dict()
     # init(setting_dict)
     dataset, doc_list = data_process_custom(setting_dict, DATASET_TO_USE, size = 'small')
@@ -521,7 +524,7 @@ else:
         "len_dataset": len(dataset)
     }
 
-with open("cpu_time_comparison_full_threads.txt", "a") as f:
+with open("gpu_time_comparison.txt", "a") as f:
     f.write(json.dumps(formatted_results))
     f.write("\n")
 

@@ -12,15 +12,18 @@ METRICS_TO_USE = ["Recall@1000"]
 GROUPS_KG = {}
 
 for experiment_type in EXPERIMENT_TYPES:
-    GROUPS_KG[f"ERU-KG {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
-    GROUPS_KG[f"ERU-KG (no titles) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_titles_nounphrase_v6-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
-    GROUPS_KG[f"ERU-KG (no queries) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_queries_nounphrase_v6-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
-    GROUPS_KG[f"ERU-KG (no cc) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_cc_nounphrase_v6-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
-    GROUPS_KG[f"ERU-KG-small {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v7-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 4)]
-    GROUPS_KG[f"AutoKeyGen {experiment_type}"] = [f"autokeygen-{i} {experiment_type}" for i in range(1, 4)]
-    GROUPS_KG[f"UOKG {experiment_type}"] = [f"uokg-{i} {experiment_type}" for i in range(1, 4)]
-    GROUPS_KG[f"CopyRNN {experiment_type}"] = [f"copyrnn-{i} {experiment_type}" for i in range(1, 4)]
-    GROUPS_KG[f"TPG {experiment_type}"] = [f"tpg-{i} {experiment_type}" for i in range(1, 4)]
+    GROUPS_KG[f"ERU-KG {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 2)]
+    GROUPS_KG[f"ERU-KG (no titles) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_titles_nounphrase_v8-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 2)]
+    GROUPS_KG[f"ERU-KG (no queries) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_queries_nounphrase_v8-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 2)]
+    GROUPS_KG[f"ERU-KG (no cc) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_no_cc_nounphrase_v8-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 2)]
+    GROUPS_KG[f"ERU-KG (neighbor size 10) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-{i}_position_penalty+length_penalty_neighborsize_10 {experiment_type}" for i in range(1, 2)]
+    GROUPS_KG[f"ERU-KG (neighbor size 50) {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-{i}_position_penalty+length_penalty_neighborsize_50 {experiment_type}" for i in range(1, 2)]
+    
+    GROUPS_KG[f"ERU-KG-small {experiment_type}"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v9-{i}_position_penalty+length_penalty {experiment_type}" for i in range(1, 2)]
+    GROUPS_KG[f"AutoKeyGen {experiment_type}"] = [f"autokeygen-{i} {experiment_type}" for i in range(1, 2)]
+    GROUPS_KG[f"UOKG {experiment_type}"] = [f"uokg-{i} {experiment_type}" for i in range(1, 2)]
+    GROUPS_KG[f"CopyRNN {experiment_type}"] = [f"copyrnn-{i} {experiment_type}" for i in range(1, 2)]
+    GROUPS_KG[f"TPG {experiment_type}"] = [f"tpg-{i} {experiment_type}" for i in range(1, 2)]
 
 GROUPS_TRADITIONAL_MODELS = {
     "DocT5query": ["doct5queries"] + [None] * (3 - 1),
@@ -48,7 +51,7 @@ def get_dataset_name_from_experiment_name(name):
 
 data = []
 visited = set([])
-with open("bm25_eval_results_3jan2025.txt") as f:
+with open("bm25_eval_results_ablations_12feb2025.txt") as f:
     for line in f:
         jline = json.loads(line)
         exp_name = jline["name"]
@@ -86,4 +89,4 @@ df = pd.DataFrame(data)
 first_column = df.pop('dataset_name')
 df.insert(0, 'dataset_name', first_column)
 
-df.to_csv("bm25_eval_results_3jan2025.csv", index = False)
+df.to_csv("bm25_eval_results_ablations_12feb2025.csv", index = False)

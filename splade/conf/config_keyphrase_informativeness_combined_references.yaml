@@ -1,0 +1,19 @@
+# FILES
+defaults:  # (these specify which config FILES to use)
+  ############## TRAIN ###################################
+  - train/config: splade_keyphrase_informativeness_normal
+  - train/data: keyphrase_informativeness_combined_references
+  - train/model: splade_pretrain_from_bert_l6-512 #splade_pretrain_from_distilbert
+  ############## INDEX ###################################
+  - index: toy
+  ############## RETRIEVE ################################
+  - retrieve_evaluate: toy
+  ############### FLOPS ##################################
+  - flops: toy
+
+# Direct PARAMETER setting
+config:  # to be provided for each run
+  checkpoint_dir: "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v9-3/debug/checkpoint"
+  index_dir: "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v9-3/debug/index"
+  out_dir: "/scratch/lamdo/splade_checkpoints/experiments_combined_references_v9-3/debug/out"
+  fp16: true

@@ -1,0 +1,19 @@
+# FILES
+defaults:  # (these specify which config FILES to use)
+  ############## TRAIN ###################################
+  - train/config: splade_doc_keyphrase_informativeness_low_regularization_weight
+  - train/data: keyphrase_informativeness_unarxive_full_paper->scirepeval_search
+  - train/model: splade_doc_finetune_from_model_pretrained_on_unarxive_full_paper_1citationpersentence
+  ############## INDEX ###################################
+  - index: toy
+  ############## RETRIEVE ################################
+  - retrieve_evaluate: toy
+  ############### FLOPS ##################################
+  - flops: toy
+
+# Direct PARAMETER setting
+config:  # to be provided for each run
+  checkpoint_dir: "experiments_splade_doc_unarxive_full_paper_1citationpersentence->scirepeval_search/debug/checkpoint"
+  index_dir: "experiments_splade_doc_unarxive_full_paper_1citationpersentence->scirepeval_search/debug/index"
+  out_dir: "experiments_splade_doc_unarxive_full_paper_1citationpersentence->scirepeval_search/debug/out"
+  fp16: false

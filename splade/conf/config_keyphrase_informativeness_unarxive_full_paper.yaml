@@ -1,0 +1,19 @@
+# FILES
+defaults:  # (these specify which config FILES to use)
+  ############## TRAIN ###################################
+  - train/config: splade_keyphrase_informativeness_low_regularization_weight
+  - train/data: keyphrase_informativeness_unarxive_full_paper
+  - train/model: splade_pretrain_from_distilbert
+  ############## INDEX ###################################
+  - index: toy
+  ############## RETRIEVE ################################
+  - retrieve_evaluate: toy
+  ############### FLOPS ##################################
+  - flops: toy
+
+# Direct PARAMETER setting
+config:  # to be provided for each run
+  checkpoint_dir: "experiments_unarxive_full_paper_v2/debug/checkpoint"
+  index_dir: "experiments_unarxive_full_paper_v2/debug/index"
+  out_dir: "experiments_unarxive_full_paper_v2/debug/out"
+  fp16: false

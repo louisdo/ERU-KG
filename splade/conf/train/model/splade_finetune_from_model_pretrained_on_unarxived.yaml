@@ -1,0 +1,13 @@
+# @package _global_
+
+init_dict:
+  model_type_or_dir: /home/lamdo/keyphrase_informativeness_test/splade/experiments_unarxiv_citation_context_random_negsampling_only_2/debug/checkpoint/model
+  model_type_or_dir_q: null
+  freeze_d_model: 0
+  agg: max
+  fp16: true
+
+config:
+  tokenizer_type: /home/lamdo/keyphrase_informativeness_test/splade/experiments_unarxiv_citation_context_random_negsampling_only_2/debug/checkpoint/model
+  matching_type: splade
+

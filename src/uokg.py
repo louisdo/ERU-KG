@@ -807,27 +807,50 @@ def init_model(model_run_index = 1):
 
         
 
-
-def keyphrase_generation_batch(docs, top_k = 10, alpha = 0.0, model_run_index = 0):
-    lower_docs = [doc.lower() for doc in docs]
+def keyphrase_generation(doc, top_k = 10, alpha = 0.0, model_run_index = 1):
     init_model(model_run_index)
-    all_keyphrases_scores =  generate_for_dataset([{"text": doc} for doc in lower_docs])
 
-    for index in range(len(lower_docs)):
-        text = lower_docs[index]
-        keyphrases_scores = apply_length_penalty(text, all_keyphrases_scores[index], alpha = alpha)
-        if RERANK_BEAMSEARCH: keyphrases_scores = adjust_score(text, keyphrases_scores)
+    lower_doc = str(doc).lower()
 
-        present_keyphrases_scores = [item for item in keyphrases_scores if item[0] in text]
-        # present_keyphrases = [item[0] for item in present_keyphrases_scores]
+    all_keyphrases_scores =  generate_for_dataset([{"text": lower_doc}])
 
-        absent_keyphrases_scores = [item for item in keyphrases_scores if item[0] not in text]
-        #absent_keyphrases_scores = [[item[0], item[1]] if item[0] in PHRASE_COUNTER else [item[0], item[1] * 1.2] for item in absent_keyphrases_scores]
-        absent_keyphrases_scores = list(sorted(absent_keyphrases_scores, key = lambda x: x[1]))
-        # absent_keyphrases = [item[0] for item in absent_keyphrases_scores]
+    text = lower_doc
+    keyphrases_scores = apply_length_penalty(text, all_keyphrases_scores[0], alpha = alpha)
+    if RERANK_BEAMSEARCH: keyphrases_scores = adjust_score(text, keyphrases_scores)
+
+    present_keyphrases_scores = [item for item in keyphrases_scores if item[0] in text]
+
+    absent_keyphrases_scores = [item for item in keyphrases_scores if item[0] not in text]
+    absent_keyphrases_scores = list(sorted(absent_keyphrases_scores, key = lambda x: x[1]))
 
 
     return {
         "present": present_keyphrases_scores,
         "absent": absent_keyphrases_scores
     }
+
+
+
+# def keyphrase_generation_batch(docs, top_k = 10, alpha = 0.0, model_run_index = 0):
+#     lower_docs = [doc.lower() for doc in docs]
+#     init_model(model_run_index)
+#     all_keyphrases_scores =  generate_for_dataset([{"text": doc} for doc in lower_docs])
+
+#     for index in range(len(lower_docs)):
+#         text = lower_docs[index]
+#         keyphrases_scores = apply_length_penalty(text, all_keyphrases_scores[index], alpha = alpha)
+#         if RERANK_BEAMSEARCH: keyphrases_scores = adjust_score(text, keyphrases_scores)
+
+#         present_keyphrases_scores = [item for item in keyphrases_scores if item[0] in text]
+#         # present_keyphrases = [item[0] for item in present_keyphrases_scores]
+
+#         absent_keyphrases_scores = [item for item in keyphrases_scores if item[0] not in text]
+#         #absent_keyphrases_scores = [[item[0], item[1]] if item[0] in PHRASE_COUNTER else [item[0], item[1] * 1.2] for item in absent_keyphrases_scores]
+#         absent_keyphrases_scores = list(sorted(absent_keyphrases_scores, key = lambda x: x[1]))
+#         # absent_keyphrases = [item[0] for item in absent_keyphrases_scores]
+
+
+#     return {
+#         "present": present_keyphrases_scores,
+#         "absent": absent_keyphrases_scores
+#     }

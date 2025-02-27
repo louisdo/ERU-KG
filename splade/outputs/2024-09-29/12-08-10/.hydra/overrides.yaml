@@ -1,0 +1,3 @@
+- config.checkpoint_dir=experiments_unarxive_full_paper/debug/checkpoint
+- config.index_dir=experiments_unarxive_full_paper/debug/index
+- config.out_dir=experiments_unarxive_full_paper/debug/out

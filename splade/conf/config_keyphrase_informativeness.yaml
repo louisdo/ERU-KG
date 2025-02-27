@@ -1,0 +1,19 @@
+# FILES
+defaults:  # (these specify which config FILES to use)
+  ############## TRAIN ###################################
+  - train/config: splade_keyphrase_informativeness
+  - train/data: keyphrase_informativeness
+  - train/model: splade
+  ############## INDEX ###################################
+  - index: toy
+  ############## RETRIEVE ################################
+  - retrieve_evaluate: toy
+  ############### FLOPS ##################################
+  - flops: toy
+
+# Direct PARAMETER setting
+config:  # to be provided for each run
+  checkpoint_dir: "/home/lamdo/keyphrase_informativeness_test/splade/lamdo_scripts/checkpoints/test"
+  index_dir: ???
+  out_dir: ???
+  fp16: false

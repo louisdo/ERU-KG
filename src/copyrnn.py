@@ -696,33 +696,55 @@ def init_model(model_run_index):
         print("Done load model")
 
 
-def keyphrase_generation_batch(docs, top_k = 10, alpha = 0.0, model_run_index = 1):
+
+def keyphrase_generation(doc, top_k = 10, alpha = 0.0, model_run_index = 1):
     init_model(model_run_index)
 
-    lower_docs = [str(doc).lower() for doc in docs]
+    lower_doc = str(doc).lower()
+    all_keyphrases_scores =  generate_for_dataset([{"text": lower_doc}])
 
-    all_keyphrases_scores =  generate_for_dataset([{"text": doc} for doc in lower_docs])
+    text = lower_doc
+    keyphrases_scores = apply_length_penalty(text, all_keyphrases_scores[0], alpha = alpha)
 
-    for index in range(len(lower_docs)):
-        text = lower_docs[index]
-        keyphrases_scores = apply_length_penalty(text, all_keyphrases_scores[index], alpha = alpha)
+    present_keyphrases_scores = [item for item in keyphrases_scores if item[0] in text]
 
-        present_keyphrases_scores = [item for item in keyphrases_scores if item[0] in text]
-        # position_biases = position_score(text, [item[0] for item in present_keyphrases_scores])
-        # #print(position_biases)
-        # present_keyphrases_scores = list(sorted([[item[0], item[1] * position_biases[item[0]]] for item in present_keyphrases_scores], key = lambda x: -x[1]))
-        # present_keyphrases = [item[0] for item in present_keyphrases_scores]
-
-        absent_keyphrases_scores = [item for item in keyphrases_scores if item[0] not in text]
-        # absent_keyphrases_scores = [[item[0], item[1] / 2] if item[0] in PHRASE_COUNTER else [item[0], item[1]] for item in absent_keyphrases_scores]
-        absent_keyphrases_scores = list(sorted(absent_keyphrases_scores, key = lambda x: x[1]))
-        # absent_keyphrases = [item[0] for item in absent_keyphrases_scores]
-
-        # present_kp_preds.append(present_keyphrases + [f"padding-{i}" for i in range(10)])
-        # absent_kp_preds.append(absent_keyphrases + [f"padding-{i}" for i in range(10)])
-
+    absent_keyphrases_scores = [item for item in keyphrases_scores if item[0] not in text]
+    absent_keyphrases_scores = list(sorted(absent_keyphrases_scores, key = lambda x: x[1]))
 
     return {
         "present": present_keyphrases_scores,
         "absent": absent_keyphrases_scores
     }
+
+
+
+# def keyphrase_generation_batch(docs, top_k = 10, alpha = 0.0, model_run_index = 1):
+#     init_model(model_run_index)
+
+#     lower_docs = [str(doc).lower() for doc in docs]
+
+#     all_keyphrases_scores =  generate_for_dataset([{"text": doc} for doc in lower_docs])
+
+#     for index in range(len(lower_docs)):
+#         text = lower_docs[index]
+#         keyphrases_scores = apply_length_penalty(text, all_keyphrases_scores[index], alpha = alpha)
+
+#         present_keyphrases_scores = [item for item in keyphrases_scores if item[0] in text]
+#         # position_biases = position_score(text, [item[0] for item in present_keyphrases_scores])
+#         # #print(position_biases)
+#         # present_keyphrases_scores = list(sorted([[item[0], item[1] * position_biases[item[0]]] for item in present_keyphrases_scores], key = lambda x: -x[1]))
+#         # present_keyphrases = [item[0] for item in present_keyphrases_scores]
+
+#         absent_keyphrases_scores = [item for item in keyphrases_scores if item[0] not in text]
+#         # absent_keyphrases_scores = [[item[0], item[1] / 2] if item[0] in PHRASE_COUNTER else [item[0], item[1]] for item in absent_keyphrases_scores]
+#         absent_keyphrases_scores = list(sorted(absent_keyphrases_scores, key = lambda x: x[1]))
+#         # absent_keyphrases = [item[0] for item in absent_keyphrases_scores]
+
+#         # present_kp_preds.append(present_keyphrases + [f"padding-{i}" for i in range(10)])
+#         # absent_kp_preds.append(absent_keyphrases + [f"padding-{i}" for i in range(10)])
+
+
+#     return {
+#         "present": present_keyphrases_scores,
+#         "absent": absent_keyphrases_scores
+#     }

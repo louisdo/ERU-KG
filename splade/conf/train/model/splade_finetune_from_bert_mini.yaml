@@ -1,0 +1,13 @@
+# @package _global_
+
+init_dict:
+  model_type_or_dir: prajjwal1/bert-mini
+  model_type_or_dir_q: null
+  freeze_d_model: 0
+  agg: max
+  fp16: true
+
+config:
+  tokenizer_type: prajjwal1/bert-mini
+  matching_type: splade
+

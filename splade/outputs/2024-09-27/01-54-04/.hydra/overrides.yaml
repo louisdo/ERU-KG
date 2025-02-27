@@ -1,0 +1,3 @@
+- config.checkpoint_dir=experiments_unarxive+scirepeval_search/debug/checkpoint
+- config.index_dir=experiments_unarxive+scirepeval_search/debug/index
+- config.out_dir=experiments_unarxive+scirepeval_search/debug/out

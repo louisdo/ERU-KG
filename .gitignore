@@ -2,8 +2,8 @@
 *_gitig_*
 *view*.csv
 *view*.txt
-*cpu_time_comparison*.txt
-*cpu_time_comparison*.csv
+*time_comparison*.txt
+*time_comparison*.csv
 __pycache__/
 sent2vec/
 test*.ipynb

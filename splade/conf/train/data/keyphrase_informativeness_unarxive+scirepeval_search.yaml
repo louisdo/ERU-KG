@@ -1,0 +1,11 @@
+# @package data
+
+type: triplets
+
+TRAIN_DATA_DIR: /home/lamdo/keyphrase_informativeness_test/splade/data/keyphrase_informative_unArxiv+scirepeval_search/triplets #/scratch/lamdo/unArxive/keyphrase_informativeness_unArxiv/triplets_additional_filter_with_random_negsampling #/scratch/lamdo/unArxive/keyphrase_informativeness_unArxiv/triplets_additional_filter #/scratch/lamdo/unArxive/keyphrase_informativeness_unArxiv/triplets #data/msmarco/triplets #data/keyphrase_informative/triplets
+VALIDATION_SIZE_FOR_LOSS: 20
+VALIDATION_FULL_RANKING:
+  D_COLLECTION_PATH: data/toy_data/val_collection
+  Q_COLLECTION_PATH: data/toy_data/val_queries
+  QREL_PATH: data/toy_data/qrel/qrel.json
+  TOP_K: 20

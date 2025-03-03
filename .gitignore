@@ -2,6 +2,7 @@
 *_gitig_*
 *view*.csv
 *view*.txt
+*raw.tsv
 *time_comparison*.txt
 *time_comparison*.csv
 __pycache__/
@@ -9,6 +10,5 @@ sent2vec/
 test*.ipynb
 bm25_eval_results*.txt
 bm25_eval_results*.csv
-data/
 scirepeval/
 splade_/

@@ -4,15 +4,15 @@ from tqdm import tqdm
 from nltk.stem.porter import PorterStemmer
 from typing import *
 
-from src.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
-from src.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
-from src.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
-# from src.keyBART import generate_keywords as keybart_keyphrase_generation
-from src.process_dataset import process_dataset
-# from src.ukg import generate_keyphrases as ukg_keyphrase_generation
-from src.retrieval_based_ukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
-from src.textrank import keyphrase_extraction as textrank_keyphrase_extraction
-from src.nounphrase_extractor import nounphrase_extraction_as_keyphrase_generation
+from erukg.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
+from erukg.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
+from erukg.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
+# from erukg.keyBART import generate_keywords as keybart_keyphrase_generation
+from erukg.process_dataset import process_dataset
+# from erukg.ukg import generate_keyphrases as ukg_keyphrase_generation
+from erukg.retrieval_based_ukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
+from erukg.textrank import keyphrase_extraction as textrank_keyphrase_extraction
+from erukg.nounphrase_extractor import nounphrase_extraction_as_keyphrase_generation
 # from pyserini.search.lucene import LuceneSearcher
 
 # this is for uokg
@@ -89,7 +89,7 @@ class Lang:
     def lookup_tokens(self, indices: List[int], src_tokens: List[str] = None) -> List[str]:
         assert hasattr(self, "vocab"), "Vocab has not been built"
         return [self.lookup_token(index, src_tokens) for index in indices]
-from src.uokg import keyphrase_generation_batch as keyphrase_generation_batch_uokg
+from erukg.uokg import keyphrase_generation_batch as keyphrase_generation_batch_uokg
 
 RETRIEVAL_DATASETS = ["nq320k", "scirepeval_search", "scirepeval_search_validation_evaluation"]
 
@@ -350,36 +350,36 @@ def do_keyphrase_extraction(doc, top_k = 10):
     
 
     elif MODEL_TO_USE == "autokeygen-1":
-        from src.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
+        from erukg.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
         return keyphrase_generation_batch_autokeygen(docs = [doc], alpha = 0, model_run_index=1)
     elif MODEL_TO_USE == "autokeygen-2":
-        from src.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
+        from erukg.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
         return keyphrase_generation_batch_autokeygen(docs = [doc], alpha = 0, model_run_index=2)
     elif MODEL_TO_USE == "autokeygen-3":
-        from src.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
+        from erukg.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
         return keyphrase_generation_batch_autokeygen(docs = [doc], alpha = 0, model_run_index=3)
     elif MODEL_TO_USE == "autokeygen-4":
-        from src.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
+        from erukg.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
         return keyphrase_generation_batch_autokeygen(docs = [doc], alpha = 0, model_run_index=4)
     elif MODEL_TO_USE == "autokeygen-5":
-        from src.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
+        from erukg.autokeygen import keyphrase_generation_batch as keyphrase_generation_batch_autokeygen
         return keyphrase_generation_batch_autokeygen(docs = [doc], alpha = 0, model_run_index=5)
     
 
     elif MODEL_TO_USE == "copyrnn-1":
-        from src.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn
+        from erukg.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn
         return keyphrase_generation_batch_copyrnn(docs = [doc], top_k = top_k, alpha = 0, model_run_index=1)
     elif MODEL_TO_USE == "copyrnn-2":
-        from src.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn
+        from erukg.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn
         return keyphrase_generation_batch_copyrnn(docs = [doc], top_k = top_k, alpha = 0, model_run_index=2)
     elif MODEL_TO_USE == "copyrnn-3":    
-        from src.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn
+        from erukg.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn
         return keyphrase_generation_batch_copyrnn(docs = [doc], top_k = top_k, alpha = 0, model_run_index=3)
     elif MODEL_TO_USE == "copyrnn-4":
-        from src.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn    
+        from erukg.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn    
         return keyphrase_generation_batch_copyrnn(docs = [doc], top_k = top_k, alpha = 0, model_run_index=4)
     elif MODEL_TO_USE == "copyrnn-5":
-        from src.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn
+        from erukg.copyrnn import keyphrase_generation_batch as keyphrase_generation_batch_copyrnn
         return keyphrase_generation_batch_copyrnn(docs = [doc], top_k = top_k, alpha = 0, model_run_index=5)
     
     elif MODEL_TO_USE == "nounphrase_extraction_1_5":
@@ -389,19 +389,19 @@ def do_keyphrase_extraction(doc, top_k = 10):
     
 
     elif MODEL_TO_USE == "tpg-1":
-        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        from erukg.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
         return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=1)
     elif MODEL_TO_USE == "tpg-2":
-        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        from erukg.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
         return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=2)
     elif MODEL_TO_USE == "tpg-3":
-        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        from erukg.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
         return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=3)
     elif MODEL_TO_USE == "tpg-4":
-        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        from erukg.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
         return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=4)
     elif MODEL_TO_USE == "tpg-5":
-        from src.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
+        from erukg.tpg import tpg_keyphrase_generation as tpg_keyphrase_generation
         return tpg_keyphrase_generation(doc, top_k = top_k, model_run_index=5)
     else:
         raise NotImplementedError

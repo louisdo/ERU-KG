@@ -3,8 +3,8 @@ from datasets import load_dataset
 from tqdm import tqdm
 from nltk.stem.porter import PorterStemmer
 
-from src.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
-from src.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
+from erukg.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
+from erukg.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
 
 
 RESULTS_FOLDER = os.environ["RESULTS_FOLDER"]

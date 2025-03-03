@@ -1,7 +1,7 @@
 import sent2vec, torch
 import numpy as np
 import torch.nn.functional as F
-from src.nounphrase_extractor import CandidateExtractorRegExpNLTK
+from erukg.nounphrase_extractor import CandidateExtractorRegExpNLTK
 from transformers import AutoTokenizer, AutoModel
 
 CANDEXT = CandidateExtractorRegExpNLTK([1,5])

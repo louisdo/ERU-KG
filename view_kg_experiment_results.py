@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from tqdm import tqdm
-from src.evaluation_metrics.f_score import precision_recall_f1, token_based_precision_recall_f1, stem_keyphrase, process_kp
+from erukg.evaluation_metrics.f_score import precision_recall_f1, token_based_precision_recall_f1, stem_keyphrase, process_kp
 from nltk.stem.porter import PorterStemmer
 
 STEMMER = PorterStemmer()

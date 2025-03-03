@@ -5,8 +5,8 @@
 # from collections import Counter
 # from transformers import AutoModelForMaskedLM, AutoTokenizer
 # from splade.models.transformer_rep import Splade
-# from src.retrieval_based_phraseness_module import RetrievalBasedPhrasenessModule
-# from src.splade_inference import SPLADE_MODEL, get_tokens_scores_of_doc, get_tokens_scores_of_docs_batch, init_splade_model
+# from erukg.retrieval_based_phraseness_module import RetrievalBasedPhrasenessModule
+# from erukg.splade_inference import SPLADE_MODEL, get_tokens_scores_of_doc, get_tokens_scores_of_docs_batch, init_splade_model
 
 
 
@@ -272,8 +272,8 @@ from typing import List, Dict
 from collections import Counter
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 from splade.models.transformer_rep import Splade
-from src.retrieval_based_phraseness_module import RetrievalBasedPhrasenessModule
-from src.splade_inference import SPLADE_MODEL, get_tokens_scores_of_doc, get_tokens_scores_of_docs_batch, init_splade_model
+from erukg.retrieval_based_phraseness_module import RetrievalBasedPhrasenessModule
+from erukg.splade_inference import SPLADE_MODEL, get_tokens_scores_of_doc, get_tokens_scores_of_docs_batch, init_splade_model
 
 
 

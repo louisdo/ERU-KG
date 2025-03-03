@@ -3,7 +3,7 @@ from tqdm import tqdm
 import nltk, traceback
 import re, json, os, time
 
-from src.nounphrase_extractor import CandidateExtractorRegExpNLTK
+from erukg.nounphrase_extractor import CandidateExtractorRegExpNLTK
 
 class DocumentRetriever:
     def __init__(self, index_path):

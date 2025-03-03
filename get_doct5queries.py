@@ -1,7 +1,7 @@
 import json, os
 from tqdm import tqdm
-from src.process_dataset import process_dataset, process_dataset_with_doct5query
-from src.nounphrase_extractor import CandidateExtractorRegExpNLTK
+from erukg.process_dataset import process_dataset, process_dataset_with_doct5query
+from erukg.nounphrase_extractor import CandidateExtractorRegExpNLTK
 
 CANDEXT = CandidateExtractorRegExpNLTK([1,5])
 

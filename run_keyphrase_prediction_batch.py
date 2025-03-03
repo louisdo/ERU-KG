@@ -4,11 +4,11 @@ from tqdm import tqdm
 from nltk.stem.porter import PorterStemmer
 from typing import List
 
-from src.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
-from src.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
-from src.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
-from src.process_dataset import process_dataset
-from src.retrieval_based_ukg import keyphrase_generation_batch as retrieval_based_ukg_keyphrase_generation
+from erukg.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
+from erukg.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
+from erukg.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
+from erukg.process_dataset import process_dataset
+from erukg.retrieval_based_ukg import keyphrase_generation_batch as retrieval_based_ukg_keyphrase_generation
 
 
 RETRIEVAL_DATASETS = ["nq320k", "scirepeval_search", "scifact", "scidocs", 

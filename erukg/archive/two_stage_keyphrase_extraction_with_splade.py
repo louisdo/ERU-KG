@@ -4,7 +4,7 @@ import numpy as np
 from collections import Counter
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 from splade.models.transformer_rep import Splade
-from src.nounphrase_extractor import CandidateExtractorRegExpNLTK
+from erukg.nounphrase_extractor import CandidateExtractorRegExpNLTK
 
 
 

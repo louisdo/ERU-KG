@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 
 pd.options.mode.chained_assignment = None
 
-from src.promptrank_helper.data import data_process_custom, process_single_doc
+from erukg.promptrank_helper.data import data_process_custom, process_single_doc
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 MODELS = {}

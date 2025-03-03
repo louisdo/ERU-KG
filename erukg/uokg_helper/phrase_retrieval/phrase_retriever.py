@@ -1,10 +1,10 @@
 import sys, nltk
 # sys.path.append("../")
 from collections import Counter, OrderedDict
-from src.uokg_helper.phrase_retrieval.build_index import *
+from erukg.uokg_helper.phrase_retrieval.build_index import *
 from sklearn.preprocessing import normalize
 from tqdm import tqdm
-from src.uokg_helper.sent2vec_model import Sent2VecModel
+from erukg.uokg_helper.sent2vec_model import Sent2VecModel
 
 
 def _knn_search(emb, index, k):

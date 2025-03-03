@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import torch.nn.functional as F
 from transformers import EncoderDecoderModel, BertTokenizer
-from src.two_stage_keyphrase_extraction_with_splade import init_splade_model, SPLADE_MODEL, get_tokens_scores_of_doc
+from erukg.two_stage_keyphrase_extraction_with_splade import init_splade_model, SPLADE_MODEL, get_tokens_scores_of_doc
 from transformers import LogitsProcessor
 from collections import Counter
 

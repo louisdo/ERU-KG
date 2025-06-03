@@ -10,7 +10,7 @@ from erukg.multipartiterank import keyphrase_extraction as multipartiterank_keyp
 # from erukg.keyBART import generate_keywords as keybart_keyphrase_generation
 from erukg.process_dataset import process_dataset
 # from erukg.ukg import generate_keyphrases as ukg_keyphrase_generation
-from erukg.retrieval_based_ukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
+from keyphrase_informativeness_test.erukg.erukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
 from erukg.textrank import keyphrase_extraction as textrank_keyphrase_extraction
 from erukg.nounphrase_extractor import nounphrase_extraction_as_keyphrase_generation
 # from pyserini.search.lucene import LuceneSearcher

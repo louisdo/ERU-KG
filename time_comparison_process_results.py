@@ -3,7 +3,7 @@ import pandas as pd
 from copy import deepcopy
 
 
-with open("gpu_time_comparison.txt") as f:
+with open("gpu_time_comparison_rebuttal.txt") as f:
     eval_data = []
     for line in f:
         eval_data.append(json.loads(line))
@@ -66,4 +66,4 @@ second_column = df.pop('run_index')
 df.insert(1, 'run_index', second_column)
 
 
-df.to_csv("gpu_time_comparison.csv", index=False)
+df.to_csv("gpu_time_comparison_rebuttal.csv", index=False)

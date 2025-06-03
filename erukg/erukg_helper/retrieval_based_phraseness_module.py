@@ -1,9 +1,11 @@
 from collections import Counter
 from tqdm import tqdm
-import nltk, traceback
-import re, json, os, time
+import traceback
+import json, os, time
 
 from erukg.nounphrase_extractor import CandidateExtractorRegExpNLTK
+from erukg.erukg_helper.config import GENERAL_CONFIG
+from erukg.erukg_helper.utils import maybe_create_folder
 
 class DocumentRetriever:
     def __init__(self, index_path):
@@ -83,31 +85,65 @@ class RetrievalBasedPhrasenessModule:
     def __init__(self, 
                  document_index_path: str, 
                  neighbor_size: int,
-                 alpha: float = 0.75,
+                 document_index_download_url: str = None,
+                 beta: float = 0.75,
                  document_index_phrase_field: str = "present_keyphrases",
                  document_index_vector_field: str = "vector",
-                 informativeness_model_name: str = ""):
-        self.doc_retriever = DocumentRetriever(index_path=document_index_path)
+                 informativeness_model_name: str = "",
+                 no_retrieval = False):
+        self.document_index_path = document_index_path
+        self.document_index_download_url = document_index_download_url
+        self.no_retrieval = no_retrieval
+
+        self.doc_retriever = None
+
+        if not no_retrieval:
+            self.load_retriever()
+        else:
+            self.doc_retriever = None
         self.candext = CandidateExtractorRegExpNLTK([1, 5])
         # self.candext_2_5 = CandidateExtractorRegExpNLTK([2,5])
-        self.neighbor_size = neighbor_size
 
         self.document_index_phrase_field = document_index_phrase_field
         self.document_index_vector_field = document_index_vector_field
 
-        assert 0 <= alpha <= 1
-        self._set_alpha(alpha)
+        assert 0 <= beta <= 1
+        self._set_beta(beta)
+        self._set_neighbor_size(neighbor_size)
 
-        self.cache_path = f"/scratch/lamdo/erukg_cache_{informativeness_model_name}.json"
+        cache_dir = GENERAL_CONFIG["cache_dir"]
+        phrase_vocab_cache_dir = os.path.join(cache_dir, "phrase_vocab")
+        maybe_create_folder(phrase_vocab_cache_dir)
+        # self.cache_path = f"/scratch/lamdo/erukg_cache_{informativeness_model_name}.json"
+        self.cache_path = os.path.join(phrase_vocab_cache_dir, f"erukg_cache_{informativeness_model_name}.json")
 
         self.phrase_glossary, self.docid2phraseid, self.docid2tokenscore = self._build_phrase_glossary()
 
+    def load_retriever(self):
+        if os.path.exists(self.document_index_path):
+            self.doc_retriever = DocumentRetriever(index_path=self.document_index_path)
+        else:
+            message = f"Index not found at '{self.document_index_path}'."
+            if self.document_index_download_url is not None:
+                message += f"\nPlease download the index from '{self.document_index_download_url}', unzip it, and place the index in '{self.document_index_path}'"
+            raise FileNotFoundError(message)
 
-    def _set_alpha(self, alpha):
-        self.alpha = alpha
-        self.one_minus_alpha = 1 - alpha
+    def _set_beta(self, beta):
+        self.beta = beta
+        self.one_minus_beta = 1 - beta
+
+    def _set_neighbor_size(self, neighbor_size):
+        self.neighbor_size = neighbor_size
+
+    def _set_no_retrieval(self, no_retrieval: bool):
+        self.no_retrieval = no_retrieval
+        if no_retrieval is False:
+            if self.doc_retriever is None: self.load_retriever()
+
 
     def _build_phrase_glossary(self, cutoff = 3):
+        if self.doc_retriever is None or self.no_retrieval is True: return [], {}, {}
+
         if not os.path.exists(self.cache_path):
             phrase_counter = Counter()
             docid2phrase = {}
@@ -152,9 +188,13 @@ class RetrievalBasedPhrasenessModule:
     def _extract_batch(self, docs):
         return [self.candext(doc) for doc in docs]
     
-    def _retrieve(self, doc):
+    def _retrieve(self, doc, return_pruning_latency = False):
+        if self.doc_retriever is None or self.no_retrieval is True:
+            if return_pruning_latency:
+                return Counter(), None, None, None
+            return Counter(), None, None
         try:
-            if self.alpha == 1: return Counter(), None, None
+            if self.beta == 1: return Counter(), None, None
             # return Counter()
             retrieval_results = self.doc_retriever.search_single_query(
                 query = doc, 
@@ -162,6 +202,7 @@ class RetrievalBasedPhrasenessModule:
                 return_raw=False
             )
 
+            start = time.time()
             scores = [item.get("score") for item in retrieval_results]
             docids = [item.get("docid") for item in retrieval_results]
             total_scores = sum(scores)
@@ -180,17 +221,24 @@ class RetrievalBasedPhrasenessModule:
                     _temp = doc_score / len(nounphrases)
                     for nounp in nounphrases:
                         all_nounphrases[nounp] += _temp
-
+            res = Counter(dict(all_nounphrases.most_common(100)))
+            end = time.time()
             # return all_nounphrases
-            return Counter(dict(all_nounphrases.most_common(100))), retrieved_documents_vectors, scores
+            if return_pruning_latency:
+                return res, retrieved_documents_vectors, scores, end - start
+            return res, retrieved_documents_vectors, scores
             # return all_nounphrases, retrieved_documents_vectors
         except Exception as e:
             print("Error in phraseness module retrieval section", e)
+            if return_pruning_latency:
+                return Counter(), None, None, None
             return Counter(), None, None
         
     def _retrieve_batch(self, docs):
+        if self.doc_retriever is None or self.no_retrieval is True:
+            return [Counter() for _ in docs], [None for _ in docs], [None for _ in docs]
         try:
-            if self.alpha == 1: return [Counter() for _ in docs], [None for _ in docs], [None for _ in docs]
+            if self.beta == 1: return [Counter() for _ in docs], [None for _ in docs], [None for _ in docs]
             # Perform batch search
             batch_results = self.doc_retriever.batch_search(
                 queries=docs,
@@ -245,20 +293,27 @@ class RetrievalBasedPhrasenessModule:
 
         all_phrases = all_extracted_phrases.union(all_retrieved_phrases)
 
-        res = Counter({phrase: self.alpha * extracted_nounphrases_counter[phrase] + self.one_minus_alpha * retrieved_nounphrases_counter[phrase] for phrase in all_phrases})
+        res = Counter({phrase: self.beta * extracted_nounphrases_counter[phrase] + self.one_minus_beta * retrieved_nounphrases_counter[phrase] for phrase in all_phrases})
 
         return res
     
 
-    def __call__(self, doc, return_retrieved_documents_vectors = False, return_retrieved_documents_scores = False):
+
+    def __call__(self, doc, return_retrieved_documents_vectors = False, return_retrieved_documents_scores = False, return_pruning_latency = False):
         extracted_nounphrases = self._extract(doc)
-        retrieved_nounphrases, retrieved_documents_vectors, retrieved_documents_scores = self._retrieve(doc)
+
+        if return_pruning_latency:
+            retrieved_nounphrases, retrieved_documents_vectors, retrieved_documents_scores, pruning_latency = self._retrieve(doc, return_pruning_latency=True)
+        else:
+            retrieved_nounphrases, retrieved_documents_vectors, retrieved_documents_scores = self._retrieve(doc)
+            pruning_latency = None
 
         res = {
             "keyphrase_candidates_scores": self._combined_retrieval_and_extraction(
                 extracted_nounphrases=extracted_nounphrases,
                 retrieved_nounphrases=retrieved_nounphrases
-            )
+            ),
+            "pruning_latency": pruning_latency
         }
 
         if return_retrieved_documents_vectors:

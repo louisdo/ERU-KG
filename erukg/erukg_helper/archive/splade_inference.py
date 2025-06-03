@@ -1,5 +1,5 @@
 import torch, sys, traceback
-sys.path.append("/home/lamdo/keyphrase_informativeness_test/splade")
+sys.path.append("../splade")
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 from collections import Counter
 from splade.models.transformer_rep import Splade

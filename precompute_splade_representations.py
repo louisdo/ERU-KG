@@ -41,7 +41,7 @@ import os, json
 from tqdm import tqdm
 from erukg.process_dataset import process_dataset
 # from erukg.two_stage_keyphrase_extraction_with_splade import get_tokens_scores_of_doc, init_splade_model
-from erukg.splade_inference import get_tokens_scores_of_docs_batch, init_splade_model, SPLADE_MODEL
+from erukg.erukg_helper.splade_inference import get_tokens_scores_of_docs_batch, init_splade_model, SPLADE_MODEL
 
 
 DATASET_TO_USE = os.environ["DATASET_TO_USE"]

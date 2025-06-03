@@ -1,7 +1,7 @@
 models_to_include=(
-    "tpg-1"
-    "tpg-2"
-    "tpg-3"
+    # "tpg-1"
+    # "tpg-2"
+    # "tpg-3"
     # "autokeygen-1"
     # "autokeygen-2"
     # "autokeygen-3"
@@ -38,7 +38,26 @@ models_to_include=(
 
     # embedrank_sentence_transformers_all-MiniLM-L12-v2
 
+    # "eru_kg_1_alpha_1_beta_1"
+    # "eru_kg_1_alpha_0.8_beta_0.8"
+    # "eru_kg_1_alpha_0.6_beta_0.6"
+    # "eru_kg_1_alpha_0.4_beta_0.4"
+    # "eru_kg_1_alpha_0.2_beta_0.2"
+    # "eru_kg_1_alpha_0_beta_0"
 
+    "eru_kg_2_alpha_1_beta_1"
+    "eru_kg_2_alpha_0.8_beta_0.8"
+    "eru_kg_2_alpha_0.6_beta_0.6"
+    "eru_kg_2_alpha_0.4_beta_0.4"
+    "eru_kg_2_alpha_0.2_beta_0.2"
+    "eru_kg_2_alpha_0_beta_0"
+
+    "eru_kg_3_alpha_1_beta_1"
+    "eru_kg_3_alpha_0.8_beta_0.8"
+    "eru_kg_3_alpha_0.6_beta_0.6"
+    "eru_kg_3_alpha_0.4_beta_0.4"
+    "eru_kg_3_alpha_0.2_beta_0.2"
+    "eru_kg_3_alpha_0_beta_0"
 )
 
 join_by() {

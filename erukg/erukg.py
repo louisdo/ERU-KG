@@ -1,0 +1,258 @@
+import torch, sys, math
+sys.path.append("../splade")
+import numpy as np
+from typing import List, Dict
+from collections import Counter
+from erukg.erukg_helper import (
+    get_tokens_scores_of_doc, 
+    get_tokens_scores_of_docs_batch,
+    init_splade_model, 
+    init_phraseness_module, 
+    SPLADE_MODEL, 
+    PHRASENESS_MODULE, 
+    DEVICE, 
+    HYPERPARAMS
+)
+
+
+def is_sublist(sublist, main_list):
+    if len(sublist) > len(main_list):
+        return False
+    
+    return any(sublist == main_list[i:i+len(sublist)] for i in range(len(main_list) - len(sublist) + 1))
+
+
+def merge_and_average_dicts(dict_list: List[Dict[str, float]], weights: List[float] = None):
+    if not dict_list:
+        return Counter()
+    
+    if not weights:
+        weights = [1 / len(dict_list)] * len(dict_list)
+    
+    # Sum up all values for each key
+    combined = Counter()
+    for d, weight in zip(dict_list, weights):
+        combined.update({k: v * weight for k,v in d.items()})
+    
+    # Divide by the number of dictionaries
+    # num_dicts = len(dict_list)
+    # return Counter({k: v / num_dicts for k, v in combined.items()})
+    return combined
+
+
+def score_candidates_by_positions(candidates: List[str], doc: str):
+    res = Counter()
+    for cand in candidates:
+        try:
+            temp = doc.index(cand)
+            position = len([item for item in doc[:temp].split(" ") if item]) + 1
+            position_score = 1 + 1 / math.log2(position + 2) #(position + 1) / position
+        except ValueError:
+            position_score = 1
+        res[cand] = position_score
+    return res
+
+def score_candidates(candidates: List[str], 
+                     candidates_tokens: List[List[int]], 
+                     tokens_scores: dict,
+                     model_name: str,
+                     retrieved_documents_tokens_scores: List[dict] = None,
+                     retrieved_documents_scores: List[float] = None, # this is the retrieval scores of the retrieved documents
+                     candidates_positions_scores: dict = {},
+                     candidates_phraseness_scores: dict = {}):
+    # length penalization < 0 means returning longer sequence
+    length_penalty = HYPERPARAMS["length_penalty"]
+    alpha = HYPERPARAMS["alpha"]
+    tokenized_candidates = [SPLADE_MODEL[model_name]["tokenizer"].convert_ids_to_tokens(item) for item in candidates_tokens]
+
+    averaged_retrieved_documents_tokens_scores = merge_and_average_dicts(retrieved_documents_tokens_scores, weights = retrieved_documents_scores)
+    one_minus_alpha = 1 - alpha
+    candidates_scores = [np.sum([alpha * tokens_scores[tok] + one_minus_alpha * averaged_retrieved_documents_tokens_scores[tok] for tok in tokenized_cand]) / (len(tokenized_cand) - length_penalty) for tokenized_cand in tokenized_candidates]
+
+    if candidates_phraseness_scores:
+        candidates_scores = [score * (candidates_phraseness_scores[candidates[i]] ** 1.5) for i, score in enumerate(candidates_scores)]
+
+    if candidates_positions_scores:
+        candidates_scores = [score * candidates_positions_scores[candidates[i]] for i, score in enumerate(candidates_scores)]
+    assert len(candidates) == len(candidates_scores)
+    return [(cand, score) for cand, score in zip(candidates, candidates_scores)]
+
+
+
+def keyphrase_generation(doc: str, 
+                        top_k: int = 10,
+                        informativeness_model_name: str = "",
+                        apply_position_penalty: bool = False,
+                        precomputed_tokens_scores: dict = None,
+                        return_pruning_latency: bool = False,
+                        no_retrieval = False):
+    
+    alpha, beta = HYPERPARAMS["alpha"], HYPERPARAMS["beta"]
+    neighbor_size = HYPERPARAMS["neighbor_size"]
+    init_phraseness_module(informativeness_model_name, no_retrieval = no_retrieval)
+    init_splade_model(informativeness_model_name)
+
+    PHRASENESS_MODULE[informativeness_model_name]._set_beta(beta)
+    PHRASENESS_MODULE[informativeness_model_name]._set_neighbor_size(neighbor_size)
+    PHRASENESS_MODULE[informativeness_model_name]._set_no_retrieval(no_retrieval)
+
+    lower_doc = doc.lower()
+    doc_tokens = SPLADE_MODEL[informativeness_model_name]["tokenizer"](lower_doc, return_tensors="pt", max_length = 512, truncation = True)
+
+    if not precomputed_tokens_scores:
+        tokens_scores = get_tokens_scores_of_doc(doc_tokens = doc_tokens, model_name = informativeness_model_name)
+    else:
+        tokens_scores = precomputed_tokens_scores
+
+    phraseness_module_output = PHRASENESS_MODULE[informativeness_model_name](
+        doc, return_retrieved_documents_vectors=True, return_retrieved_documents_scores=True,
+        return_pruning_latency = return_pruning_latency)
+    
+    candidates_phraseness_score = phraseness_module_output["keyphrase_candidates_scores"]
+    retrieved_documents_vectors = phraseness_module_output["retrieved_documents_vectors"]
+    retrieved_documents_scores = phraseness_module_output["retrieved_documents_scores"]
+
+    candidates = list(candidates_phraseness_score.keys())
+
+    # candidates_tokens = [SPLADE_MODEL[informativeness_model_name]["tokenizer"].convert_ids_to_tokens(SPLADE_MODEL[informativeness_model_name]["tokenizer"](cand)["input_ids"][1:-1]) for cand in candidates]
+    candidates_tokens = [SPLADE_MODEL[informativeness_model_name]["tokenizer"](cand)["input_ids"][1:-1] for cand in candidates]
+
+    if apply_position_penalty:
+        candidates_positions_scores = score_candidates_by_positions(candidates, lower_doc)
+    else:
+        candidates_positions_scores = []
+
+    # print(candidates[0], tokens_scores[candidates[0]], candidates_positions_scores[candidates[0]])
+    scores = score_candidates(candidates,
+                              candidates_tokens,
+                              tokens_scores,
+                              model_name = informativeness_model_name, 
+                              retrieved_documents_tokens_scores=retrieved_documents_vectors,
+                              retrieved_documents_scores=retrieved_documents_scores,
+                              candidates_positions_scores = candidates_positions_scores,
+                              candidates_phraseness_scores=candidates_phraseness_score)
+
+    # present_indices = [i for i in range(len(candidates_tokens)) if is_sublist(candidates_tokens[i], doc_tokens["input_ids"].tolist()[0])]
+    # absent_indices = [i for i in range(len(candidates_tokens)) if i not in present_indices]
+
+    if alpha < 1:
+        present_indices = [i for i in range(len(candidates)) if candidates[i] in lower_doc]
+        absent_indices = [i for i in range(len(candidates_tokens)) if i not in present_indices]
+    else: 
+        present_indices = list(range(len(candidates)))
+        absent_indices = []
+
+    present_candidates_scores = [scores[i] for i in present_indices]
+    present_candidates_scores = list(sorted(present_candidates_scores, key = lambda x: -x[1]))
+    absent_candidates_scores = [scores[i] for i in absent_indices]
+    absent_candidates_scores = list(sorted(absent_candidates_scores, key = lambda x: -x[1]))
+
+    res = {
+        "present": present_candidates_scores[:top_k],
+        "absent": absent_candidates_scores[:top_k],
+        "pruning_latency": phraseness_module_output.get("pruning_latency")
+    }
+
+    return res
+
+
+def _keyphrase_generation_helper(
+        candidates, 
+        candidates_tokens, 
+        doc_tokens,
+        lower_doc,
+        tokens_scores,
+        retrieved_documents_tokens_scores,
+        retrieved_documents_scores, # this is the retrieval scores of the retrieved documents
+        candidates_positions_scores,
+        candidates_phraseness_score,
+        informativeness_model_name, 
+        top_k):
+    scores = score_candidates(candidates,
+                              candidates_tokens, 
+                              tokens_scores, 
+                              model_name = informativeness_model_name, 
+                              retrieved_documents_tokens_scores=retrieved_documents_tokens_scores,
+                              retrieved_documents_scores = retrieved_documents_scores,
+                              candidates_positions_scores = candidates_positions_scores,
+                              candidates_phraseness_scores=candidates_phraseness_score)
+
+    # present_indices = [i for i in range(len(candidates_tokens)) if is_sublist(candidates_tokens[i], doc_tokens)]
+    present_indices = [i for i in range(len(candidates)) if candidates[i] in lower_doc]
+    absent_indices = [i for i in range(len(candidates_tokens)) if i not in present_indices]
+
+    present_candidates_scores = [scores[i] for i in present_indices]
+    present_candidates_scores = list(sorted(present_candidates_scores, key = lambda x: -x[1]))
+    absent_candidates_scores = [scores[i] for i in absent_indices]
+    absent_candidates_scores = list(sorted(absent_candidates_scores, key = lambda x: -x[1]))
+
+    res = {
+        "present": present_candidates_scores[:top_k],
+        "absent": absent_candidates_scores[:top_k]
+    }
+
+    return res
+
+
+def keyphrase_generation_batch(
+    docs: str, 
+    top_k: int = 10,
+    informativeness_model_name: str = "",
+    apply_position_penalty: bool = False,
+    precomputed_tokens_scores: dict = None):
+
+    alpha, beta = HYPERPARAMS["alpha"], HYPERPARAMS["beta"]
+    neighbor_size = HYPERPARAMS["neighbor_size"]
+
+    init_splade_model(informativeness_model_name)
+    init_phraseness_module(informativeness_model_name)
+
+    PHRASENESS_MODULE[informativeness_model_name]._set_beta(beta)
+    PHRASENESS_MODULE[informativeness_model_name]._set_neighbor_size(neighbor_size)
+
+    lower_docs = [str(doc).lower() for doc in docs]
+    docs_tokens = SPLADE_MODEL[informativeness_model_name]["tokenizer"](lower_docs, return_tensors="pt", max_length = 512, padding = True, truncation = True)
+
+    if not precomputed_tokens_scores:
+        batch_tokens_scores = get_tokens_scores_of_docs_batch(docs_tokens = docs_tokens, model_name = informativeness_model_name)
+    else:
+        batch_tokens_scores = [Counter(item) for item in precomputed_tokens_scores]
+        # print("YO", batch_tokens_scores)
+
+    phraseness_module_output = PHRASENESS_MODULE[informativeness_model_name].batch_generation(
+        docs = docs, return_retrieved_documents_vectors=True, return_retrieved_documents_scores = True)
+    
+    batch_candidates_phraseness_scores = phraseness_module_output["keyphrase_candidates_scores"]
+    batch_retrieved_documents_vectors = phraseness_module_output["retrieved_documents_vectors"]
+    batch_retrieved_documents_scores = phraseness_module_output["retrieved_documents_scores"]
+
+    batch_candidates = [list(candidates_phraseness_score.keys()) for candidates_phraseness_score in batch_candidates_phraseness_scores]
+
+    batch_candidates_tokens = [[SPLADE_MODEL[informativeness_model_name]["tokenizer"](cand)["input_ids"][1:-1] for cand in candidates] for candidates in batch_candidates]
+
+    if apply_position_penalty:
+        batch_candidates_positions_scores = [score_candidates_by_positions(candidates, lower_doc) for candidates, lower_doc in zip(batch_candidates, lower_docs)]
+    else:
+        batch_candidates_positions_scores = [[] for _ in range(len(batch_candidates))]
+    
+    # print([i for i in range(len(_test)) if not _test[i]])
+    res = [
+        _keyphrase_generation_helper(
+            candidates, 
+            candidates_tokens, 
+            doc_tokens,
+            lower_doc,
+            tokens_scores,
+            retrieved_documents_vectors,
+            retrieved_documents_scores,
+            candidates_positions_scores,
+            candidates_phraseness_score,
+            informativeness_model_name, 
+            top_k
+        ) for candidates, candidates_tokens, doc_tokens, lower_doc, tokens_scores, retrieved_documents_vectors, retrieved_documents_scores, candidates_positions_scores, candidates_phraseness_score in zip(
+            batch_candidates, batch_candidates_tokens, docs_tokens["input_ids"].tolist(), lower_docs, batch_tokens_scores, batch_retrieved_documents_vectors, batch_retrieved_documents_scores,
+            batch_candidates_positions_scores, batch_candidates_phraseness_scores
+        )
+    ]
+
+    return res

@@ -4,11 +4,11 @@ from tqdm import tqdm
 from nltk.stem.porter import PorterStemmer
 from typing import List
 
-from erukg.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
+# from erukg.two_stage_keyphrase_extraction_with_splade import keyphrase_extraction as splade_based_keyphrase_extraction
 from erukg.embedrank_keyphrase_extraction import embedrank_keyphrase_extraction, embed_sentences_sentence_transformer, embed_sentences_sent2vec
-from erukg.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
+# from erukg.multipartiterank import keyphrase_extraction as multipartiterank_keyphrase_extraction
 from erukg.process_dataset import process_dataset
-from erukg.retrieval_based_ukg import keyphrase_generation_batch as retrieval_based_ukg_keyphrase_generation
+from erukg.erukg import keyphrase_generation_batch as retrieval_based_ukg_keyphrase_generation
 
 
 RETRIEVAL_DATASETS = ["nq320k", "scirepeval_search", "scifact", "scidocs", 
@@ -153,29 +153,130 @@ def do_keyphrase_extraction_batch(docs: list, precomputed_representations: List[
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-1_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
                                                  precomputed_tokens_scores=precomputed_representations)
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-2_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_nounphrase_v8-2",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
                                                  precomputed_tokens_scores=precomputed_representations)
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-3_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_nounphrase_v8-3",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    
+    elif MODEL_TO_USE == "eru_kg_1_alpha_1_beta_1":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 1, beta=1,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_2_alpha_1_beta_1":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-2",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 1, beta=1,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_3_alpha_1_beta_1":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-3",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 1, beta=1,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    
+
+    elif MODEL_TO_USE == "eru_kg_1_alpha_0.8_beta_0.8":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_2_alpha_0.8_beta_0.8":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-2",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_3_alpha_0.8_beta_0.8":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-3",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    
+
+    elif MODEL_TO_USE == "eru_kg_1_alpha_0.6_beta_0.6":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.6, beta=0.6,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_2_alpha_0.6_beta_0.6":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-2",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.6, beta=0.6,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_3_alpha_0.6_beta_0.6":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-3",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.6, beta=0.6,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    
+
+    elif MODEL_TO_USE == "eru_kg_1_alpha_0.4_beta_0.4":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.4, beta=0.4,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_2_alpha_0.4_beta_0.4":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-2",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.4, beta=0.4,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_3_alpha_0.4_beta_0.4":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-3",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.4, beta=0.4,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    
+
+    elif MODEL_TO_USE == "eru_kg_1_alpha_0.2_beta_0.2":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.2, beta=0.2,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_2_alpha_0.2_beta_0.2":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-2",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.2, beta=0.2,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_3_alpha_0.2_beta_0.2":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-3",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.2, beta=0.2,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    
+
+    elif MODEL_TO_USE == "eru_kg_1_alpha_0_beta_0":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0, beta=0,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_2_alpha_0_beta_0":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-2",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0, beta=0,
+                                                 precomputed_tokens_scores=precomputed_representations)
+    elif MODEL_TO_USE == "eru_kg_3_alpha_0_beta_0":
+        return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
+                                                 informativeness_model_name="custom_trained_combined_references_nounphrase_v8-3",
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0, beta=0,
                                                  precomputed_tokens_scores=precomputed_representations)
     
 
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-1_position_penalty+length_penalty_neighborsize_10":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, neighbor_size = 10,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8, neighbor_size = 10,
                                                  precomputed_tokens_scores=precomputed_representations)
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-1_position_penalty+length_penalty_neighborsize_50":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, neighbor_size = 50,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8, neighbor_size = 50,
                                                  precomputed_tokens_scores=precomputed_representations)
     
 
@@ -183,34 +284,34 @@ def do_keyphrase_extraction_batch(docs: list, precomputed_representations: List[
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v9-1_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_nounphrase_v9-1",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
                                                  precomputed_tokens_scores=precomputed_representations)
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v9-2_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_nounphrase_v9-2",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
                                                  precomputed_tokens_scores=precomputed_representations)
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v9-3_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_nounphrase_v9-3",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
                                                  precomputed_tokens_scores=precomputed_representations)
     
 
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_no_titles_nounphrase_v8-1_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_no_titles_nounphrase_v8-1",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
                                                  precomputed_tokens_scores=precomputed_representations)
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_no_queries_nounphrase_v8-1_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_no_queries_nounphrase_v8-1",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
                                                  precomputed_tokens_scores=precomputed_representations)
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_no_cc_nounphrase_v8-1_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(docs, top_k = top_k, 
                                                  informativeness_model_name="custom_trained_combined_references_no_cc_nounphrase_v8-1",
-                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8,
+                                                 apply_position_penalty=True, length_penalty=-0.25, alpha = 0.8, beta=0.8,
                                                  precomputed_tokens_scores=precomputed_representations)
     else:
         raise NotImplementedError

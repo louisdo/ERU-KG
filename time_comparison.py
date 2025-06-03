@@ -10,11 +10,11 @@ from typing import *
 # # from erukg.keyBART import generate_keywords as keybart_keyphrase_generation
 from erukg.process_dataset import process_dataset
 # # from erukg.ukg import generate_keyphrases as ukg_keyphrase_generation
-# from erukg.retrieval_based_ukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
+from erukg.erukg import keyphrase_generation as retrieval_based_ukg_keyphrase_generation
 # from erukg.textrank import keyphrase_extraction as textrank_keyphrase_extraction
 # # from pyserini.search.lucene import LuceneSearcher
 
-from erukg.promptrank import promptrank_keyphrase_generation, get_setting_dict, init_promptrank
+# from erukg.promptrank import promptrank_keyphrase_generation, get_setting_dict, init_promptrank
 from torch.utils.data import DataLoader
 
 # this is for uokg
@@ -364,8 +364,8 @@ def do_keyphrase_extraction(doc, top_k = 10):
 
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-1_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
-                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v6-1",
-                                                        apply_position_penalty=True, length_penalty=-0.25)
+                                                        informativeness_model_name="custom_trained_combined_references_nounphrase_v8-1",
+                                                        apply_position_penalty=True, length_penalty=-0.25, return_pruning_latency=True)
     elif MODEL_TO_USE == "retrieval_based_ukg_custom_trained_combined_references_nounphrase_v6-2_position_penalty+length_penalty":
         return retrieval_based_ukg_keyphrase_generation(doc.lower(), top_k = top_k, 
                                                         informativeness_model_name="custom_trained_combined_references_nounphrase_v6-2",
@@ -433,6 +433,7 @@ dataset = process_dataset(dataset_name=DATASET_TO_USE)
 do_keyphrase_extraction('test', top_k = 50)
 
 processed_dataset = []
+pruning_latencies = []
 
 start_cpu_time = time.process_time_ns()
 start_time = time.time()
@@ -443,16 +444,19 @@ for sample in tqdm(dataset):
 
     if isinstance(document, str):
         automatically_extracted_keyphrases = do_keyphrase_extraction(document, top_k = 50)
+        pruning_latency = automatically_extracted_keyphrases["pruning_latency"]
         automatically_extracted_keyphrases = {
             "present_keyphrases":  [item[0] for item in automatically_extracted_keyphrases["present"]],
-            "absent_keyphrases":  [item[0] for item in automatically_extracted_keyphrases["absent"]],
+            "absent_keyphrases":  [item[0] for item in automatically_extracted_keyphrases["absent"]]
         }
+        pruning_latencies.append(pruning_latency)
     else: 
         print(type(document))
         automatically_extracted_keyphrases = {
             "present_keyphrases": [],
             "absent_keyphrases": []
         }
+        pruning_latencies.append(0)
 
     # line = {
     #     "document": document,
@@ -473,7 +477,7 @@ cpu_time = end_cpu_time - start_cpu_time
 latency = end_time - start_time
 
 print("CPU time:", cpu_time)
-
+assert len(pruning_latencies) == len(dataset)
 
 formatted_results = {
     "dataset": DATASET_TO_USE,
@@ -481,10 +485,11 @@ formatted_results = {
     "run_index": RUN_INDEX,
     "cpu_time": (cpu_time / 1000000000) / len(dataset),
     "latency": latency / len(dataset),
-    "len_dataset": len(dataset)
+    "len_dataset": len(dataset),
+    "pruning_latency": sum(pruning_latencies) / len(pruning_latencies)
 }
 
-with open("gpu_time_comparison.txt", "a") as f:
+with open("gpu_time_comparison_rebuttal.txt", "a") as f:
     f.write(json.dumps(formatted_results))
     f.write("\n")
 

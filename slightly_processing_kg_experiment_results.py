@@ -12,6 +12,13 @@ GROUPS["ERU-KG-base (no cc)"] = [f"retrieval_based_ukg_custom_trained_combined_r
 GROUPS["ERU-KG-base (neighbor size 50)"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-{i}_position_penalty+length_penalty_neighborsize_50" for i in range(1, 4)]
 GROUPS["ERU-KG-base (neighbor size 10)"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v8-{i}_position_penalty+length_penalty_neighborsize_10" for i in range(1, 4)]
 
+GROUPS["ERU-KG-base (alpha, beta = 1)"] = [f"eru_kg_{i}_alpha_1_beta_1" for i in range(1, 4)]
+GROUPS["ERU-KG-base (alpha, beta = 0.8)"] = [f"eru_kg_{i}_alpha_0.8_beta_0.8" for i in range(1, 4)]
+GROUPS["ERU-KG-base (alpha, beta = 0.6)"] = [f"eru_kg_{i}_alpha_0.6_beta_0.6" for i in range(1, 4)]
+GROUPS["ERU-KG-base (alpha, beta = 0.4)"] = [f"eru_kg_{i}_alpha_0.4_beta_0.4" for i in range(1, 4)]
+GROUPS["ERU-KG-base (alpha, beta = 0.2)"] = [f"eru_kg_{i}_alpha_0.2_beta_0.2" for i in range(1, 4)]
+GROUPS["ERU-KG-base (alpha, beta = 0)"] = [f"eru_kg_{i}_alpha_0_beta_0" for i in range(1, 4)]
+
 GROUPS["ERU-KG-small"] = [f"retrieval_based_ukg_custom_trained_combined_references_nounphrase_v9-{i}_position_penalty+length_penalty" for i in range(1, 4)]
 GROUPS["AutoKeyGen"] = [f"autokeygen-{i}" for i in range(1, 4)]
 GROUPS["UOKG"] = [f"uokg-{i}" for i in range(1, 4)]
@@ -40,7 +47,7 @@ def compute_average_performance(input_df):
 
     return avg_df
 
-df = pd.read_csv("view_12feb2025.csv")
+df = pd.read_csv("view_rebuttal_new_ablation.csv")
 
 processed_dataset = []
 for line in df.to_dict("records"):
@@ -72,4 +79,4 @@ third_column = newdf.pop('run_index')
 newdf.insert(2, 'run_index', third_column)
 
 print(newdf)
-newdf.to_csv("view_processed_12feb2025.csv", index=False)
+newdf.to_csv("view_processed_rebuttal_new_ablation.csv", index=False)

@@ -3,16 +3,93 @@ sys.path.append("../splade")
 import numpy as np
 from typing import List, Dict
 from collections import Counter
-from erukg.erukg_helper import (
-    get_tokens_scores_of_doc, 
-    get_tokens_scores_of_docs_batch,
-    init_splade_model, 
-    init_phraseness_module, 
-    SPLADE_MODEL, 
-    PHRASENESS_MODULE, 
-    DEVICE, 
-    HYPERPARAMS
-)
+from transformers import AutoModelForMaskedLM, AutoTokenizer
+from splade.models.transformer_rep import Splade
+from erukg.erukg_helper.retrieval_based_phraseness_module import RetrievalBasedPhrasenessModule
+from erukg.erukg_helper.splade_inference import SPLADE_MODEL, get_tokens_scores_of_doc, get_tokens_scores_of_docs_batch, init_splade_model
+
+
+
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Using device '{DEVICE}'")
+
+PHRASENESS_MODULE = {}
+
+
+def init_phraseness_module(model_name, neighbor_size = 100, beta = 0.8):
+    if PHRASENESS_MODULE.get(model_name) is not None:
+        return
+    
+    print("Initializing phraseness module:", model_name)
+    if model_name == "custom_trained_combined_references_v11-2":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_v11-2"
+    elif model_name == "custom_trained_combined_references_v6-2":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_v6-2"
+
+    elif model_name == "custom_trained_combined_references_nounphrase_v6-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v6-1"
+    elif model_name == "custom_trained_combined_references_nounphrase_v6-2":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v6-2"
+    elif model_name == "custom_trained_combined_references_nounphrase_v6-3":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v6-3"
+    elif model_name == "custom_trained_combined_references_nounphrase_v6-4":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v6-4"
+    elif model_name == "custom_trained_combined_references_nounphrase_v6-5":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v6-5"
+
+
+    elif model_name == "custom_trained_combined_references_nounphrase_v7-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v7-1"
+    elif model_name == "custom_trained_combined_references_nounphrase_v7-2":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v7-2"
+    elif model_name == "custom_trained_combined_references_nounphrase_v7-3":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v7-3"
+    elif model_name == "custom_trained_combined_references_nounphrase_v7-4":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v7-4"
+    elif model_name == "custom_trained_combined_references_nounphrase_v7-5":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v7-5"
+
+    elif model_name == "custom_trained_combined_references_nounphrase_v8-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v8-1"
+    elif model_name == "custom_trained_combined_references_nounphrase_v8-2":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v8-2"
+    elif model_name == "custom_trained_combined_references_nounphrase_v8-3":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v8-3"
+
+
+    elif model_name == "custom_trained_combined_references_nounphrase_v9-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v9-1"
+    elif model_name == "custom_trained_combined_references_nounphrase_v9-2":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v9-2"
+    elif model_name == "custom_trained_combined_references_nounphrase_v9-3":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_v9-3"
+
+    elif model_name == "custom_trained_combined_references_no_titles_nounphrase_v6-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_titles_v6-1"
+    elif model_name == "custom_trained_combined_references_no_queries_nounphrase_v6-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_queries_v6-1"
+    elif model_name == "custom_trained_combined_references_no_cc_nounphrase_v6-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_cc_v6-1"
+
+
+    elif model_name == "custom_trained_combined_references_no_titles_nounphrase_v8-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_titles_v8-1"
+    elif model_name == "custom_trained_combined_references_no_queries_nounphrase_v8-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_queries_v8-1"
+    elif model_name == "custom_trained_combined_references_no_cc_nounphrase_v8-1":
+        path = "/scratch/lamdo/keyphrase_generation_retrieval_index/index/scirepeval_search_validation_evaluation_nounphrase_no_cc_v8-1"
+        
+    else:
+        # for now this is the default path
+        path = "/scratch/lamdo/pyserini_experiments/index/scirepeval_search_validation_evaluation_keyphrase_expansion_retrieval_based_ukg_custom_trained_combined_references_v6_position_penalty+length_penalty"
+
+
+    PHRASENESS_MODULE[model_name] = RetrievalBasedPhrasenessModule(
+        path, 
+        neighbor_size=neighbor_size, 
+        beta = beta,
+        informativeness_model_name=model_name
+    )
 
 
 def is_sublist(sublist, main_list):
@@ -58,11 +135,11 @@ def score_candidates(candidates: List[str],
                      model_name: str,
                      retrieved_documents_tokens_scores: List[dict] = None,
                      retrieved_documents_scores: List[float] = None, # this is the retrieval scores of the retrieved documents
+                     length_penalty: int = 0,
                      candidates_positions_scores: dict = {},
-                     candidates_phraseness_scores: dict = {}):
+                     candidates_phraseness_scores: dict = {},
+                     alpha = 0.8):
     # length penalization < 0 means returning longer sequence
-    length_penalty = HYPERPARAMS["length_penalty"]
-    alpha = HYPERPARAMS["alpha"]
     tokenized_candidates = [SPLADE_MODEL[model_name]["tokenizer"].convert_ids_to_tokens(item) for item in candidates_tokens]
 
     averaged_retrieved_documents_tokens_scores = merge_and_average_dicts(retrieved_documents_tokens_scores, weights = retrieved_documents_scores)
@@ -83,18 +160,15 @@ def keyphrase_generation(doc: str,
                         top_k: int = 10,
                         informativeness_model_name: str = "",
                         apply_position_penalty: bool = False,
+                        length_penalty: float = 0,
                         precomputed_tokens_scores: dict = None,
-                        return_pruning_latency: bool = False,
-                        no_retrieval = False):
+                        alpha = 0.8,
+                        beta = 0.8,
+                        neighbor_size: int = 100,
+                        return_pruning_latency: bool = False):
     
-    alpha, beta = HYPERPARAMS["alpha"], HYPERPARAMS["beta"]
-    neighbor_size = HYPERPARAMS["neighbor_size"]
-    init_phraseness_module(informativeness_model_name, no_retrieval = no_retrieval)
+    init_phraseness_module(informativeness_model_name, beta= beta, neighbor_size=neighbor_size)
     init_splade_model(informativeness_model_name)
-
-    PHRASENESS_MODULE[informativeness_model_name]._set_beta(beta)
-    PHRASENESS_MODULE[informativeness_model_name]._set_neighbor_size(neighbor_size)
-    PHRASENESS_MODULE[informativeness_model_name]._set_no_retrieval(no_retrieval)
 
     lower_doc = doc.lower()
     doc_tokens = SPLADE_MODEL[informativeness_model_name]["tokenizer"](lower_doc, return_tensors="pt", max_length = 512, truncation = True)
@@ -129,6 +203,7 @@ def keyphrase_generation(doc: str,
                               model_name = informativeness_model_name, 
                               retrieved_documents_tokens_scores=retrieved_documents_vectors,
                               retrieved_documents_scores=retrieved_documents_scores,
+                              length_penalty=length_penalty,
                               candidates_positions_scores = candidates_positions_scores,
                               candidates_phraseness_scores=candidates_phraseness_score)
 
@@ -167,15 +242,19 @@ def _keyphrase_generation_helper(
         candidates_positions_scores,
         candidates_phraseness_score,
         informativeness_model_name, 
-        top_k):
+        length_penalty,
+        top_k,
+        alpha = 0.8):
     scores = score_candidates(candidates,
                               candidates_tokens, 
                               tokens_scores, 
                               model_name = informativeness_model_name, 
                               retrieved_documents_tokens_scores=retrieved_documents_tokens_scores,
                               retrieved_documents_scores = retrieved_documents_scores,
+                              length_penalty=length_penalty,
                               candidates_positions_scores = candidates_positions_scores,
-                              candidates_phraseness_scores=candidates_phraseness_score)
+                              candidates_phraseness_scores=candidates_phraseness_score,
+                              alpha = alpha)
 
     # present_indices = [i for i in range(len(candidates_tokens)) if is_sublist(candidates_tokens[i], doc_tokens)]
     present_indices = [i for i in range(len(candidates)) if candidates[i] in lower_doc]
@@ -199,16 +278,16 @@ def keyphrase_generation_batch(
     top_k: int = 10,
     informativeness_model_name: str = "",
     apply_position_penalty: bool = False,
-    precomputed_tokens_scores: dict = None):
-
-    alpha, beta = HYPERPARAMS["alpha"], HYPERPARAMS["beta"]
-    neighbor_size = HYPERPARAMS["neighbor_size"]
+    length_penalty: int = 0,
+    precomputed_tokens_scores: dict = None,
+    alpha: float = 0.8,
+    beta: float = 0.8,
+    neighbor_size = 100):
 
     init_splade_model(informativeness_model_name)
-    init_phraseness_module(informativeness_model_name)
+    init_phraseness_module(informativeness_model_name, neighbor_size = neighbor_size)
 
     PHRASENESS_MODULE[informativeness_model_name]._set_beta(beta)
-    PHRASENESS_MODULE[informativeness_model_name]._set_neighbor_size(neighbor_size)
 
     lower_docs = [str(doc).lower() for doc in docs]
     docs_tokens = SPLADE_MODEL[informativeness_model_name]["tokenizer"](lower_docs, return_tensors="pt", max_length = 512, padding = True, truncation = True)
@@ -248,7 +327,9 @@ def keyphrase_generation_batch(
             candidates_positions_scores,
             candidates_phraseness_score,
             informativeness_model_name, 
-            top_k
+            length_penalty,
+            top_k,
+            alpha
         ) for candidates, candidates_tokens, doc_tokens, lower_doc, tokens_scores, retrieved_documents_vectors, retrieved_documents_scores, candidates_positions_scores, candidates_phraseness_score in zip(
             batch_candidates, batch_candidates_tokens, docs_tokens["input_ids"].tolist(), lower_docs, batch_tokens_scores, batch_retrieved_documents_vectors, batch_retrieved_documents_scores,
             batch_candidates_positions_scores, batch_candidates_phraseness_scores

@@ -1,5 +1,7 @@
 # Data processing
 
+We describe our procedure of generating training data down below. Additionally, we provide the [processed training dataset](https://drive.google.com/file/d/1oQOY9kahaTzpYo95LiyYlhmIbbu4k-Qy/view?usp=sharing) that we use for our experiments (decompress with `gzip -d raw.tsv.gz`).
+
 ## Obtain the required data
 We create ERU-KG's training dataset from
 + unarXive permissively licensed dataset: https://zenodo.org/records/7752615

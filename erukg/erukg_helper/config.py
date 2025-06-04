@@ -12,7 +12,8 @@ HYPERPARAMS = {
 cache_dir = os.getenv("ERUKG_CACHE_DIR")
 default_cache_dir = os.path.join(str(Path.home()), ".cache", "erukg_cache")
 GENERAL_CONFIG = {
-    "cache_dir": cache_dir if cache_dir else default_cache_dir
+    "cache_dir": cache_dir if cache_dir else default_cache_dir,
+    "inference_max_batch_size": 128
 }
 
 

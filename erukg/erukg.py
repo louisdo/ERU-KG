@@ -11,7 +11,8 @@ from erukg.erukg_helper import (
     SPLADE_MODEL, 
     PHRASENESS_MODULE, 
     DEVICE, 
-    HYPERPARAMS
+    HYPERPARAMS,
+    GENERAL_CONFIG
 )
 
 
@@ -195,20 +196,24 @@ def _keyphrase_generation_helper(
 
 
 def keyphrase_generation_batch(
-    docs: str, 
+    docs: List[str], 
     top_k: int = 10,
     informativeness_model_name: str = "",
     apply_position_penalty: bool = False,
-    precomputed_tokens_scores: dict = None):
+    precomputed_tokens_scores: dict = None,
+    no_retrieval = False):
+
+    assert len(docs) <= GENERAL_CONFIG["inference_max_batch_size"], f"Number of input texts exceed 'inference_max_batch_size'={GENERAL_CONFIG['inference_max_batch_size']}"
 
     alpha, beta = HYPERPARAMS["alpha"], HYPERPARAMS["beta"]
     neighbor_size = HYPERPARAMS["neighbor_size"]
 
     init_splade_model(informativeness_model_name)
-    init_phraseness_module(informativeness_model_name)
+    init_phraseness_module(informativeness_model_name, no_retrieval=no_retrieval)
 
     PHRASENESS_MODULE[informativeness_model_name]._set_beta(beta)
     PHRASENESS_MODULE[informativeness_model_name]._set_neighbor_size(neighbor_size)
+    PHRASENESS_MODULE[informativeness_model_name]._set_no_retrieval(no_retrieval)
 
     lower_docs = [str(doc).lower() for doc in docs]
     docs_tokens = SPLADE_MODEL[informativeness_model_name]["tokenizer"](lower_docs, return_tensors="pt", max_length = 512, padding = True, truncation = True)

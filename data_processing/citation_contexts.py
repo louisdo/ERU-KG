@@ -2,32 +2,23 @@ import json, os, random, re
 from nltk.tokenize import sent_tokenize as nltk_sent_tokenize
 from tqdm import tqdm
 from utils import clean_text
+from argparse import ArgumentParser
 
-FOLDER_NAME = "/scratch/lamdo/unArxive"
-ARXIVID2METADATA_FILE = "/scratch/lamdo/arxiv_dataset/arxivid2metadata.json"
-OUTPUT_FILE = "/scratch/lamdo/unArxive/triplets_full_paper_1citationpersentence_hardneg.json"
+# FOLDER_NAME = "/scratch/lamdo/unArxive"
+# ARXIVID2METADATA_FILE = "/scratch/lamdo/arxiv_dataset/arxivid2metadata.json"
+# OUTPUT_FILE = "/scratch/lamdo/unArxive/triplets_full_paper_1citationpersentence_hardneg.json"
 
-NUMBER_NEGATIVES_WITHIN_PAPER = 3
+# NUMBER_NEGATIVES_WITHIN_PAPER = 3
 # NUMBER_NEGATIVES_RANDOM_SAMPLING = 3
 
-MAX_CITATIONS_PER_SENTENCE = 1
-MIN_SECTION_LENGTH = 10
+# MAX_CITATIONS_PER_SENTENCE = 1
+# MIN_SECTION_LENGTH = 10
 
-
-
-with open(ARXIVID2METADATA_FILE) as f:
-    _data = json.load(f)
-    print(len(_data))
-
-    ARXIV_ID_TO_TEXT = {}
-    for arxiv_id, metadata in  tqdm(_data.items()):
-        title = clean_text(metadata.get("title"))
-        abstract = clean_text(metadata.get("abstract"))
-
-        text = f"{title}. {abstract}"
-        ARXIV_ID_TO_TEXT[arxiv_id] = text
-
-    ARXIV_IDS = list(ARXIV_ID_TO_TEXT.keys())
+CONFIGS = {
+    "number_negatives_within_paper": 3,
+    "max_citations_per_sentence": 1,
+    "min_section_length": 10
+}
 
 def count_citation_groups(text):
     citation_group_pattern = r'({{cite:[0-9a-f]{40}}}(?:\s*,\s*{{cite:[0-9a-f]{40}}})*)'
@@ -36,6 +27,7 @@ def count_citation_groups(text):
 
 
 def create_triplets_from_datapoint(datapoint, 
+                                   arxiv_id_to_text: dict,
                                    min_section_length = 10,
                                    max_citation_in_sentence = None):
     body_text = datapoint.get("body_text", [])
@@ -45,17 +37,6 @@ def create_triplets_from_datapoint(datapoint,
     res = []
 
     for section in body_text:
-        # if not isinstance(section.get("section"), str) or not any([item == section.get("section").lower() for item in include_section]):
-        #     continue
-
-
-        # section_name = section.get("section")
-        # if not isinstance(section_name, str): continue
-        # section_name = section_name.lower()
-
-        # if section_name not in ['introduction', 'related work', "related works"]: continue
-        # include_section = ['introduction', 'related work', "related works"]
-        # if not any([item in section_name for item in include_section]): continue
 
         section_text = section.get("text")
         if not isinstance(section_text, str) or len(section_text.split(" ")) < min_section_length:
@@ -87,12 +68,12 @@ def create_triplets_from_datapoint(datapoint,
             if max_citation_in_sentence and citation_groups_in_sentence > max_citation_in_sentence: continue
 
             pos_citation = []
-            neg_citation_within_paper = random.sample(unmentioned_cite_spans, k = min(len(unmentioned_cite_spans), NUMBER_NEGATIVES_WITHIN_PAPER))
+            neg_citation_within_paper = random.sample(unmentioned_cite_spans, k = min(len(unmentioned_cite_spans), CONFIGS["number_negatives_within_paper"]))
             # neg_citation_within_paper = []
             # neg_citation_random_sampling = random.sample(ARXIV_IDS, k = NUMBER_NEGATIVES_RANDOM_SAMPLING)
             # neg_citation_random_sampling = []
             neg_citation = neg_citation_within_paper #+ neg_citation_random_sampling
-            neg_citation = [ARXIV_ID_TO_TEXT[item] for item in neg_citation if item in ARXIV_ID_TO_TEXT]
+            neg_citation = [arxiv_id_to_text[item] for item in neg_citation if item in arxiv_id_to_text]
 
             for cite_span in cite_spans:
                 cite_span_text = cite_span.get("text")
@@ -109,7 +90,7 @@ def create_triplets_from_datapoint(datapoint,
 
                 pos_citation.append(cite_arxiv_id)
 
-            pos_citation = [ARXIV_ID_TO_TEXT[item] for item in list((set(pos_citation))) if item in ARXIV_ID_TO_TEXT]
+            pos_citation = [arxiv_id_to_text[item] for item in list((set(pos_citation))) if item in arxiv_id_to_text]
 
 
             for pos in pos_citation:
@@ -117,33 +98,41 @@ def create_triplets_from_datapoint(datapoint,
                     res.append([sentence, pos, neg])
     return res
 
+def main():
+    parser = ArgumentParser()
+    parser.add_argument("--input_folder", type = str, required = True, help = "UnArxiv folder")
+    parser.add_argument("--arxive_metadata_file", type = str, required = True, help = "Path to arxive metadata")
+    parser.add_argument("--output_file", type = str, required = True, help = "Output file")
+    parser.add_argument("--number_negatives_within_paper", type = int, default = 3)
+    parser.add_argument("--max_citations_per_sentence", type = int, default = 1)
+    parser.add_argument("--min_section_length", type = int, default = 10)
 
-if __name__ == "__main__":
-    folders = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", 
-           "10", "11", "12", "13", "14", "15", "16", "17", "18", 
-           "19", "20", "21", "22", "93", "97", "98"]
-    folders = [os.path.join(FOLDER_NAME, folder) for folder in folders]
+    args = parser.parse_args()
 
-    # res = []
-    # all_file_data = []
-    # for folder in tqdm(folders[:10], desc = "Reading files"):
-    #     files = os.listdir(folder)
-    #     files_full_paths = [os.path.join(folder, file) for file in files]
+    input_folder = args.input_folder
+    arxive_metadata_file = args.arxive_metadata_file
+    output_file = args.output_file
+    number_negatives_within_paper = args.number_negatives_within_paper
+    max_citations_per_sentence = args.max_citations_per_sentence
+    min_section_length = args.min_section_length
 
-    #     for file_full_path in tqdm(files_full_paths):
-    #         with open(file_full_path) as f:
-    #             for line in f:
-    #                 all_file_data.append(json.loads(line))
+    CONFIGS["number_negatives_within_paper"] = number_negatives_within_paper
+    CONFIGS["max_citations_per_sentence"] = max_citations_per_sentence
+    CONFIGS["min_section_length"] = min_section_length
 
+    folders = os.listdir(input_folder)
+    folders = [os.path.join(input_folder, folder) for folder in folders]
 
-    # for line in tqdm(all_file_data, desc = "Processing"):
-    #     line_triplets = create_triplets_from_datapoint(
-    #         line, 
-    #         min_section_length=MIN_SECTION_LENGTH, 
-    #         max_citation_in_sentence=MAX_CITATIONS_PER_SENTENCE
-    #     )
+    with open(arxive_metadata_file) as f:
+        _data = json.load(f)
 
-    #     res.extend(line_triplets)
+        ARXIV_ID_TO_TEXT = {}
+        for arxiv_id, metadata in  tqdm(_data.items()):
+            title = clean_text(metadata.get("title"))
+            abstract = clean_text(metadata.get("abstract"))
+
+            text = f"{title}. {abstract}"
+            ARXIV_ID_TO_TEXT[arxiv_id] = text
 
     res = []
     all_file_data = []
@@ -160,12 +149,18 @@ if __name__ == "__main__":
     for line in tqdm(all_file_data, desc = "Processing"):
         line_triplets = create_triplets_from_datapoint(
             line, 
-            min_section_length=MIN_SECTION_LENGTH, 
-            max_citation_in_sentence=MAX_CITATIONS_PER_SENTENCE
+            arxiv_id_to_text=ARXIV_ID_TO_TEXT,
+            min_section_length=CONFIGS["min_section_length"], 
+            max_citation_in_sentence=CONFIGS["max_citations_per_sentence"]
         )
 
         res.extend(line_triplets)
 
-    print(len(res))
-    with open(OUTPUT_FILE, "w") as f:
+    with open(output_file, "w") as f:
         json.dump(res, f, indent=4)
+
+
+
+
+if __name__ == "__main__":
+    main()

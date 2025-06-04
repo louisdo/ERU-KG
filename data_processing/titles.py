@@ -2,30 +2,22 @@ import json, os, random, re
 from nltk.tokenize import sent_tokenize as nltk_sent_tokenize
 from tqdm import tqdm
 from utils import clean_text
+from argparse import ArgumentParser
 
 
-FOLDER_NAME = "/scratch/lamdo/unArxive"
-ARXIVID2METADATA_FILE = "/scratch/lamdo/arxiv_dataset/arxivid2metadata.json"
-OUTPUT_FILE=  "/scratch/lamdo/unArxive/triplets_title_abstract_hardneg.json"
+# FOLDER_NAME = "/scratch/lamdo/unArxive"
+# ARXIVID2METADATA_FILE = "/scratch/lamdo/arxiv_dataset/arxivid2metadata.json"
+# OUTPUT_FILE=  "/scratch/lamdo/unArxive/triplets_title_abstract_hardneg.json"
 
-NUMBER_NEGATIVES_WITHIN_PAPER = 3
+# NUMBER_NEGATIVES_WITHIN_PAPER = 3
 # NUMBER_NEGATIVES_RANDOM_SAMPLING = 3
 
+CONFIGS = {
+    "number_negatives_within_paper": 3
+}
 
 
 
-with open(ARXIVID2METADATA_FILE) as f:
-    _data = json.load(f)
-    print(len(_data))
-
-    ARXIV_ID_TO_METADATA = {}
-    for arxiv_id, metadata in  tqdm(_data.items()):
-        title = clean_text(metadata.get("title"))
-        abstract = clean_text(metadata.get("abstract"))
-
-        ARXIV_ID_TO_METADATA[arxiv_id] = {"title": title, "abstract": abstract}
-
-    ARXIV_IDS = list(ARXIV_ID_TO_METADATA.keys())
 
 
 def get_citation_id_by_section(datapoint):
@@ -59,7 +51,7 @@ def get_arxive_id_from_bib_entries(ref_id, bib_entries):
         return None
 
 
-def create_triplets_from_datapoint(datapoint, min_section_length = 10):
+def create_triplets_from_datapoint(datapoint, arxiv_id_to_metadata: dict, min_section_length = 10):
 
     res = []
     citation_id_by_section = get_citation_id_by_section(datapoint)
@@ -84,19 +76,19 @@ def create_triplets_from_datapoint(datapoint, min_section_length = 10):
 
             citation_arxive_id = get_arxive_id_from_bib_entries(citation_ref_id, bib_entries)
 
-            if citation_arxive_id not in ARXIV_ID_TO_METADATA: continue
+            if citation_arxive_id not in arxiv_id_to_metadata: continue
 
             # these two will form positive pairs
-            citation_title = ARXIV_ID_TO_METADATA[citation_arxive_id].get("title")
-            citation_abstract = ARXIV_ID_TO_METADATA[citation_arxive_id].get("abstract")
+            citation_title = arxiv_id_to_metadata[citation_arxive_id].get("title")
+            citation_abstract = arxiv_id_to_metadata[citation_arxive_id].get("abstract")
 
 
             # now get the negatives, first, get negatives within the same paper
-            citations_mentioned_in_other_sections_sampled = random.sample(citations_mentioned_in_other_sections, min(NUMBER_NEGATIVES_WITHIN_PAPER, len(citations_mentioned_in_other_sections)))
+            citations_mentioned_in_other_sections_sampled = random.sample(citations_mentioned_in_other_sections, min(CONFIGS["number_negatives_within_paper"], len(citations_mentioned_in_other_sections)))
             arxive_ids_of_citations_mentioned_in_other_sections_sampled = [get_arxive_id_from_bib_entries(citation_ref_id, bib_entries) for citation_ref_id in citations_mentioned_in_other_sections_sampled]
             arxive_ids_of_citations_mentioned_in_other_sections_sampled = [item for item in arxive_ids_of_citations_mentioned_in_other_sections_sampled if item]
-            arxive_ids_of_citations_mentioned_in_other_sections_sampled = [item for item in arxive_ids_of_citations_mentioned_in_other_sections_sampled if item in ARXIV_ID_TO_METADATA]
-            neg_samples_within_paper = [ARXIV_ID_TO_METADATA[other_section_arxive_id]["abstract"] for other_section_arxive_id in arxive_ids_of_citations_mentioned_in_other_sections_sampled]
+            arxive_ids_of_citations_mentioned_in_other_sections_sampled = [item for item in arxive_ids_of_citations_mentioned_in_other_sections_sampled if item in arxiv_id_to_metadata]
+            neg_samples_within_paper = [arxiv_id_to_metadata[other_section_arxive_id]["abstract"] for other_section_arxive_id in arxive_ids_of_citations_mentioned_in_other_sections_sampled]
             
             # then get random negatives
             # random_sampled_arxive_ids = random.sample(ARXIV_IDS, min(NUMBER_NEGATIVES_RANDOM_SAMPLING, len(ARXIV_IDS)))
@@ -111,11 +103,40 @@ def create_triplets_from_datapoint(datapoint, min_section_length = 10):
     return res
 
 
-if __name__ == "__main__":
+def main():
+    parser = ArgumentParser()
+    parser.add_argument("--input_folder", type = str, required = True, help = "UnArxiv folder")
+    parser.add_argument("--arxive_metadata_file", type = str, required = True, help = "Path to arxive metadata")
+    parser.add_argument("--output_file", type = str, required = True, help = "Output file")
+    parser.add_argument("--number_negatives_within_paper", type = int, default = 3)
+
+
+    args = parser.parse_args()
+
+    input_folder = args.input_folder
+    arxive_metadata_file = args.arxive_metadata_file
+    output_file = args.output_file
+    number_negatives_within_paper = args.number_negatives_within_paper
+
+    CONFIGS["number_negatives_within_paper"] = number_negatives_within_paper
+
+
+    with open(arxive_metadata_file) as f:
+        _data = json.load(f)
+        print(len(_data))
+
+        ARXIV_ID_TO_METADATA = {}
+        for arxiv_id, metadata in  tqdm(_data.items()):
+            title = clean_text(metadata.get("title"))
+            abstract = clean_text(metadata.get("abstract"))
+
+            ARXIV_ID_TO_METADATA[arxiv_id] = {"title": title, "abstract": abstract}
+
     folders = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", 
            "10", "11", "12", "13", "14", "15", "16", "17", "18", 
            "19", "20", "21", "22", "93", "97", "98"]
-    folders = [os.path.join(FOLDER_NAME, folder) for folder in folders]
+    folders = [os.path.join(input_folder, folder) for folder in folders]
+
 
     res = []
     all_file_data = []
@@ -130,11 +151,15 @@ if __name__ == "__main__":
 
     for line in tqdm(all_file_data, desc = "Processing"):
         line_triplets = create_triplets_from_datapoint(
-            line
+            line,
+            arxiv_id_to_metadata=ARXIV_ID_TO_METADATA
         )
 
         res.extend(line_triplets)
 
-    print(len(res))
-    with open(OUTPUT_FILE, "w") as f:
+    with open(output_file, "w") as f:
         json.dump(res, f, indent=4)
+
+
+if __name__ == "__main__":
+    main()

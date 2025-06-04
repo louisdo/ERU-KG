@@ -7,3 +7,7 @@ Implementation of [ERU-KG: Efficient Reference-aligned Unsupervised Keyphrase Ge
 ## Quick start 🚀
 
 Please refer to this [introduction notebook](introduction.ipynb)
+
+
+# Data Processing
+We documented the procedure for creating training dataset for ERU-KG in this [folder](data_processing)

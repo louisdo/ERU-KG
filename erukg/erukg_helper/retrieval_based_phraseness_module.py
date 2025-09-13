@@ -5,7 +5,7 @@ import json, os, time
 
 from erukg.nounphrase_extractor import CandidateExtractorRegExpNLTK
 from erukg.erukg_helper.config import GENERAL_CONFIG
-from erukg.erukg_helper.utils import maybe_create_folder
+from erukg.erukg_helper.utils import maybe_create_folder, download_and_unzip
 
 class DocumentRetriever:
     def __init__(self, index_path):
@@ -83,7 +83,7 @@ class DocumentRetriever:
 
 class RetrievalBasedPhrasenessModule:
     def __init__(self, 
-                 document_index_path: str, 
+                 indexes_folder: str, 
                  neighbor_size: int,
                  document_index_download_url: str = None,
                  beta: float = 0.75,
@@ -91,9 +91,10 @@ class RetrievalBasedPhrasenessModule:
                  document_index_vector_field: str = "vector",
                  informativeness_model_name: str = "",
                  no_retrieval = False):
-        self.document_index_path = document_index_path
+        self.indexes_folder = indexes_folder
         self.document_index_download_url = document_index_download_url
         self.no_retrieval = no_retrieval
+        self.informativeness_model_name = informativeness_model_name
 
         self.doc_retriever = None
 
@@ -120,13 +121,15 @@ class RetrievalBasedPhrasenessModule:
         self.phrase_glossary, self.docid2phraseid, self.docid2tokenscore = self._build_phrase_glossary()
 
     def load_retriever(self):
-        if os.path.exists(self.document_index_path):
-            self.doc_retriever = DocumentRetriever(index_path=self.document_index_path)
-        else:
-            message = f"Index not found at '{self.document_index_path}'."
-            if self.document_index_download_url is not None:
-                message += f"\nPlease download the index from '{self.document_index_download_url}', unzip it, and place the index in '{self.document_index_path}'"
-            raise FileNotFoundError(message)
+        document_index_path = os.path.join(self.indexes_folder, self.informativeness_model_name)
+        if not os.path.exists(document_index_path):
+            download_and_unzip(url = self.document_index_download_url, extract_to=self.indexes_folder)
+            # message = f"Index not found at '{self.document_index_path}'."
+            # if self.document_index_download_url is not None:
+            #     message += f"\nPlease download the index from '{self.document_index_download_url}', unzip it, and place the index in '{self.document_index_path}'"
+            # raise FileNotFoundError(message)
+
+        self.doc_retriever = DocumentRetriever(index_path=document_index_path)
 
     def _set_beta(self, beta):
         self.beta = beta

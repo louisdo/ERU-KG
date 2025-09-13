@@ -47,9 +47,8 @@ def init_phraseness_module(model_name, neighbor_size = 100, beta = 0.8, no_retri
     print("Initializing phraseness module:", model_name)
 
     model_info = MODEL_NAME_2_MODEL_INFO[model_name]
-    # pn_ret_index_dir = model_info["pn_ret_index_dir"]
 
-    pn_ret_index_dir = os.path.join(GENERAL_CONFIG["cache_dir"], "ret_indexes", model_name)
+    pn_ret_index_dir = os.path.join(GENERAL_CONFIG["cache_dir"], "ret_indexes")
     pn_ret_index_download_url = model_info["pn_ret_index_download_url"]
 
     PHRASENESS_MODULE[model_name] = RetrievalBasedPhrasenessModule(

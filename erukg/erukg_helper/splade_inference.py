@@ -1,7 +1,7 @@
 import torch, sys, traceback
 sys.path.append("../splade")
 from collections import Counter
-from erukg.erukg_helper.init_models import SPLADE_MODEL, DEVICE, init_splade_model
+from erukg.erukg_helper.init_models import SPLADE_MODEL, DEVICE
 
 
 def get_tokens_scores_of_doc(doc_tokens, model_name):

@@ -5,13 +5,19 @@ Implementation of our ACL 2025 paper [ERU-KG: Efficient Reference-aligned Unsupe
 ## We are finetuning this repository!! Will be done with all instructions soon
 TODOs: We need to run everything again to make sure everything is working
 
+## Installation
+This project uses **Python 3.10.14**
+```bash
+cat requirements.txt | xargs -n 1 pip install
+```
+
 ## Quick start 🚀
 
 Please refer to this [introduction notebook](introduction.ipynb)
 
 
 ## Data Processing
-We documented the procedure for creating training dataset for ERU-KG in this [folder](data_processing)
+Please refer to this [documentation](data_processing/README.md)
 
 
 ## Creating a model with custom dataset

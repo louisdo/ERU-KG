@@ -1,6 +1,6 @@
 # Model creation
 
-Here we give instructions on how to build a keyphrase generation model from scratch. We acknowledge that the pipeline at the moment is not very convenient, and we will spend time improving it.
+Here we give instructions on how to build a keyphrase generation model from scratch.
 
 ## SPLADE training
 First we need to change directory

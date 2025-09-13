@@ -1,7 +1,7 @@
 import torch, sys, math
 sys.path.append("../splade")
 import numpy as np
-from typing import List, Dict
+from typing import List, Dict, Optional
 from collections import Counter
 from erukg.erukg_helper import (
     get_tokens_scores_of_doc, 
@@ -86,16 +86,16 @@ def keyphrase_generation(doc: str,
                         apply_position_penalty: bool = False,
                         precomputed_tokens_scores: dict = None,
                         return_pruning_latency: bool = False,
-                        no_retrieval = False):
+                        retrieval: Optional[bool] = True):
     
     alpha, beta = HYPERPARAMS["alpha"], HYPERPARAMS["beta"]
     neighbor_size = HYPERPARAMS["neighbor_size"]
-    init_phraseness_module(informativeness_model_name, no_retrieval = no_retrieval)
+    init_phraseness_module(informativeness_model_name, retrieval = retrieval)
     init_splade_model(informativeness_model_name)
 
     PHRASENESS_MODULE[informativeness_model_name]._set_beta(beta)
     PHRASENESS_MODULE[informativeness_model_name]._set_neighbor_size(neighbor_size)
-    PHRASENESS_MODULE[informativeness_model_name]._set_no_retrieval(no_retrieval)
+    PHRASENESS_MODULE[informativeness_model_name]._set_retrieval(retrieval)
 
     lower_doc = doc.lower()
     doc_tokens = SPLADE_MODEL[informativeness_model_name]["tokenizer"](lower_doc, return_tensors="pt", max_length = 512, truncation = True)
@@ -198,22 +198,22 @@ def _keyphrase_generation_helper(
 def keyphrase_generation_batch(
     docs: List[str], 
     top_k: int = 10,
-    informativeness_model_name: str = "",
-    apply_position_penalty: bool = False,
-    precomputed_tokens_scores: dict = None,
-    no_retrieval = False):
+    informativeness_model_name: Optional[str] = "",
+    apply_position_penalty: Optional[bool] = False,
+    precomputed_tokens_scores: Optional[dict] = None,
+    retrieval: Optional[bool] = True):
 
     assert len(docs) <= GENERAL_CONFIG["inference_max_batch_size"], f"Number of input texts exceed 'inference_max_batch_size'={GENERAL_CONFIG['inference_max_batch_size']}"
 
-    alpha, beta = HYPERPARAMS["alpha"], HYPERPARAMS["beta"]
+    beta = HYPERPARAMS["beta"]
     neighbor_size = HYPERPARAMS["neighbor_size"]
 
     init_splade_model(informativeness_model_name)
-    init_phraseness_module(informativeness_model_name, no_retrieval=no_retrieval)
+    init_phraseness_module(informativeness_model_name, retrieval=retrieval)
 
     PHRASENESS_MODULE[informativeness_model_name]._set_beta(beta)
     PHRASENESS_MODULE[informativeness_model_name]._set_neighbor_size(neighbor_size)
-    PHRASENESS_MODULE[informativeness_model_name]._set_no_retrieval(no_retrieval)
+    PHRASENESS_MODULE[informativeness_model_name]._set_retrieval(retrieval)
 
     lower_docs = [str(doc).lower() for doc in docs]
     docs_tokens = SPLADE_MODEL[informativeness_model_name]["tokenizer"](lower_docs, return_tensors="pt", max_length = 512, padding = True, truncation = True)

@@ -40,7 +40,7 @@ def init_splade_model(model_name):
     }
 
 
-def init_phraseness_module(model_name, neighbor_size = 100, beta = 0.8, no_retrieval = False):
+def init_phraseness_module(model_name, neighbor_size = 100, beta = 0.8, retrieval = True):
     if PHRASENESS_MODULE.get(model_name) is not None:
         return
     
@@ -57,5 +57,5 @@ def init_phraseness_module(model_name, neighbor_size = 100, beta = 0.8, no_retri
         document_index_download_url = pn_ret_index_download_url,
         beta = beta,
         informativeness_model_name=model_name,
-        no_retrieval = no_retrieval
+        retrieval = retrieval
     )

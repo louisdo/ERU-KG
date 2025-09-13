@@ -90,15 +90,15 @@ class RetrievalBasedPhrasenessModule:
                  document_index_phrase_field: str = "present_keyphrases",
                  document_index_vector_field: str = "vector",
                  informativeness_model_name: str = "",
-                 no_retrieval = False):
+                 retrieval = False):
         self.indexes_folder = indexes_folder
         self.document_index_download_url = document_index_download_url
-        self.no_retrieval = no_retrieval
+        self.no_retrieval = not retrieval
         self.informativeness_model_name = informativeness_model_name
 
         self.doc_retriever = None
 
-        if not no_retrieval:
+        if retrieval:
             self.load_retriever()
         else:
             self.doc_retriever = None
@@ -138,9 +138,9 @@ class RetrievalBasedPhrasenessModule:
     def _set_neighbor_size(self, neighbor_size):
         self.neighbor_size = neighbor_size
 
-    def _set_no_retrieval(self, no_retrieval: bool):
-        self.no_retrieval = no_retrieval
-        if no_retrieval is False:
+    def _set_retrieval(self, retrieval: bool):
+        self.no_retrieval = not retrieval
+        if retrieval:
             if self.doc_retriever is None: self.load_retriever()
 
 

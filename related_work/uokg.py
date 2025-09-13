@@ -1,10 +1,10 @@
 import sys, nltk, torch, math, os, json
 import numpy as np
-from erukg.uokg_helper.sent2vec_model import Sent2VecModel
+from related_work.uokg_helper.sent2vec_model import Sent2VecModel
 from collections import Counter
-from erukg.uokg_helper.models.PhraseLM_PG_POS_Version2 import TransformerPointerGenerator
-from erukg.uokg_helper.phrase_retrieval.build_index import load_index
-from erukg.uokg_helper.phrase_retrieval.phrase_retriever import knn_search, knn_search_batch, knn_search_return_score, mmr
+from related_work.uokg_helper.models.PhraseLM_PG_POS_Version2 import TransformerPointerGenerator
+from related_work.uokg_helper.phrase_retrieval.build_index import load_index
+from related_work.uokg_helper.phrase_retrieval.phrase_retriever import knn_search, knn_search_batch, knn_search_return_score, mmr
 
 
 
